@@ -3,7 +3,28 @@
 - 可以看看哪个服务器的gpu空闲
 - 可以查看GPU核心谁在跑实验
 
+
 # extra
+## 优化SSH服务器连接
+```bash
+open ~/.ssh/config
+```
+把
+```
+Host 跳板机
+  ControlMaster auto
+  ControlPath ~/.ssh/cm-%r@%h:%p
+  ControlPersist 10m
+
+# 2. 针对内网目标机器的优化：全部应用复用
+Host 你的内网机器
+  ControlMaster auto
+  ControlPath ~/.ssh/cm-%r@%h:%p
+  ControlPersist 10m
+```
+
+作用： 登录一次服务器后，接下来的 10 分钟内，如果再次连接同一台服务器（或者通过它跳转），不需要再输入密码或进行密钥验证，连接会“秒连”，我在测试的是否，如果不优化连接，频繁连接的话，会被检测，然后被拒绝连接。
+
 ## 配置APP在macos,方便查看服务器gpu信息
 打开终端，输入：
 ```bash
