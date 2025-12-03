@@ -21,7 +21,7 @@ HOSTS = load_hosts()
 SSH_USER = None 
 # ===========================================
 
-st.set_page_config(page_title="GPU Cluster", layout="wide", page_icon="⚡")
+st.set_page_config(page_title="GPU Cluster", layout="wide", page_icon="⚡", initial_sidebar_state="expanded")
 
 # ==========================================
 # 侧边栏：控制面板 & 资源概览
@@ -53,6 +53,8 @@ st.markdown("""
     .small-font { font-size: 0.8em; color: #666; }
     /* 侧边栏表格样式优化 */
     [data-testid="stSidebar"] [data-testid="stDataFrame"] { font-size: 0.9em; }
+    /* 增加侧边栏宽度 */
+    [data-testid="stSidebar"] { min-width: 400px; width: 400px; }
 </style>
 """, unsafe_allow_html=True)
 
