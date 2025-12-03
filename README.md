@@ -3,6 +3,7 @@
 - 可以看看哪个服务器的gpu空闲
 - 可以查看GPU核心谁在跑实验
 
+新建``hosts.txt``,然后每行是一个主机名字，注意服务器为你配置了公钥登录，你可以通过本地ssh私钥登陆，即(ssh xxx)，不需要密码，直接进入server.
 ```
 pip install pandas streamlit
 streamlit run monitor.py
