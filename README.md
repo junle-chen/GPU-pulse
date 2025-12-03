@@ -70,12 +70,9 @@ cd /Users/xxx/Code/monitor
 
 - 右键点击桌面刚做好的 GPU Monitor，选择 "显示简介" (Get Info)。
 
-### 图标制作
 - 可以使用gemini banana 制作或者找自己喜欢的图
 - 使用image2icon app可以制作，然后复制粘贴到(Get Info)里面
 
 - 点击左上角那个小的机器人图标（选中后它会发蓝光）。如下图，我找了GPU Cluster图片
 - <img width="167" height="133" alt="image" src="https://github.com/user-attachments/assets/53eafb99-e0af-4cae-8b5f-5df8f27366d2" />
 
-
-- 按 Cmd + V 粘贴。
