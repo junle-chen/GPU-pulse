@@ -143,92 +143,100 @@ def parse_data(gpu_csv, proc_csv, user_txt):
 
 placeholder = st.empty()
 
-while True:
-    # 准备收集统计数据
-    stats_list = []
-    
-    with placeholder.container():
-        with ThreadPoolExecutor(max_workers=len(HOSTS)) as executor:
-            results = list(executor.map(get_gpu_status, HOSTS))
+try:
+    while True:
+        # 准备收集统计数据
+        stats_list = []
         
-        cols = st.columns(3) + st.columns(3)
-
-        for i, (host, gpu_raw, proc_raw, user_raw, err) in enumerate(results):
-            # 先计算该主机的可用 GPU 数量，用于侧边栏统计
-            host_name = host.split('.')[0]
-            total_gpu = 0
-            free_gpu = 0
+        with placeholder.container():
+            with ThreadPoolExecutor(max_workers=len(HOSTS)) as executor:
+                results = list(executor.map(get_gpu_status, HOSTS))
             
-            # 数据解析
-            df_gpu, df_proc = pd.DataFrame(), pd.DataFrame()
-            if not err and gpu_raw:
-                df_gpu, df_proc = parse_data(gpu_raw, proc_raw, user_raw)
-                total_gpu = len(df_gpu)
-                # 计算 Free: 显存 < 500 MiB 视为 Free
-                if not df_gpu.empty:
-                    free_gpu = len(df_gpu[df_gpu['mem_used'] < 500])
+            cols = st.columns(3) + st.columns(3)
 
-            # 存入统计列表
-            stats_list.append({
-                "Server": host_name,
-                "Free": f"{free_gpu} / {total_gpu}",
-                "Status": "🔴 Down" if err else ("🟢 OK" if free_gpu > 0 else "🟡 Full")
-            })
+            for i, (host, gpu_raw, proc_raw, user_raw, err) in enumerate(results):
+                # 先计算该主机的可用 GPU 数量，用于侧边栏统计
+                host_name = host.split('.')[0]
+                total_gpu = 0
+                free_gpu = 0
+                
+                # 数据解析
+                df_gpu, df_proc = pd.DataFrame(), pd.DataFrame()
+                if not err and gpu_raw:
+                    df_gpu, df_proc = parse_data(gpu_raw, proc_raw, user_raw)
+                    total_gpu = len(df_gpu)
+                    # 计算 Free: 显存 < 500 MiB 视为 Free
+                    if not df_gpu.empty:
+                        free_gpu = len(df_gpu[df_gpu['mem_used'] < 500])
 
-            # --- 下面是主界面的渲染逻辑 ---
-            if i >= len(cols): continue
-            with cols[i]:
-                st.subheader(f"🖥️ {host_name}")
-                if err:
-                    st.error(err)
-                elif not df_gpu.empty:
-                    for _, row in df_gpu.iterrows():
-                        try:
-                            gpu_idx = int(row['idx'])
-                            mem_used = float(row['mem_used'])
-                            mem_total = float(row['mem_total'])
-                            util = float(row['util_gpu'])
-                            temp = int(row['temp'])
-                        except: continue
+                # 存入统计列表
+                stats_list.append({
+                    "Server": host_name,
+                    "Free": f"{free_gpu} / {total_gpu}",
+                    "Status": "🔴 Down" if err else ("🟢 OK" if free_gpu > 0 else "🟡 Full")
+                })
 
-                        ratio = mem_used / mem_total if mem_total > 0 else 0
-                        gpu_name = str(row['name']).replace("NVIDIA ", "").replace("GeForce ", "").replace("RTX ", "")
-                        
-                        with st.container(border=True):
-                            c1, c2 = st.columns([7, 3])
-                            c1.write(f"**GPU {gpu_idx}**: {gpu_name}")
-                            color = "red" if temp > 80 else "grey"
-                            c2.markdown(f":{color}[{temp}°C]")
+                # --- 下面是主界面的渲染逻辑 ---
+                if i >= len(cols): continue
+                with cols[i]:
+                    st.subheader(f"🖥️ {host_name}")
+                    if err:
+                        st.error(err)
+                    elif not df_gpu.empty:
+                        for _, row in df_gpu.iterrows():
+                            try:
+                                gpu_idx = int(row['idx'])
+                                mem_used = float(row['mem_used'])
+                                mem_total = float(row['mem_total'])
+                                util = float(row['util_gpu'])
+                                temp = int(row['temp'])
+                            except: continue
+
+                            ratio = mem_used / mem_total if mem_total > 0 else 0
+                            gpu_name = str(row['name']).replace("NVIDIA ", "").replace("GeForce ", "").replace("RTX ", "")
                             
-                            st.progress(ratio, text=f"RAM: {int(mem_used)} / {int(mem_total)} MB")
-                            st.metric("Utility", f"{int(util)}%", label_visibility="collapsed")
+                            with st.container(border=True):
+                                c1, c2 = st.columns([7, 3])
+                                c1.write(f"**GPU {gpu_idx}**: {gpu_name}")
+                                color = "red" if temp > 80 else "grey"
+                                c2.markdown(f":{color}[{temp}°C]")
+                                
+                                st.progress(ratio, text=f"RAM: {int(mem_used)} / {int(mem_total)} MB")
+                                st.metric("Utility", f"{int(util)}%", label_visibility="collapsed")
 
-                            if not df_proc.empty and 'gpu_idx' in df_proc.columns:
-                                my_procs = df_proc[df_proc['gpu_idx'] == gpu_idx].copy()
-                                if not my_procs.empty:
-                                    my_procs['process_name'] = my_procs['process_name'].apply(lambda x: x.split('/')[-1] if '/' in x else x)
-                                    display_df = my_procs[['user', 'pid', 'mem_used', 'process_name']]
-                                    display_df.columns = ['User', 'PID', 'Mem', 'Proc']
-                                    st.dataframe(display_df, hide_index=True, use_container_width=True)
+                                if not df_proc.empty and 'gpu_idx' in df_proc.columns:
+                                    my_procs = df_proc[df_proc['gpu_idx'] == gpu_idx].copy()
+                                    if not my_procs.empty:
+                                        my_procs['process_name'] = my_procs['process_name'].apply(lambda x: x.split('/')[-1] if '/' in x else x)
+                                        display_df = my_procs[['user', 'pid', 'mem_used', 'process_name']]
+                                        display_df.columns = ['User', 'PID', 'Mem', 'Proc']
+                                        st.dataframe(display_df, hide_index=True, use_container_width=True)
+                                    else:
+                                        st.caption("No active processes")
                                 else:
-                                    st.caption("No active processes")
-                            else:
-                                st.caption("Idle")
-                else:
-                    st.warning("No GPU Info")
+                                    st.caption("Idle")
+                    else:
+                        st.warning("No GPU Info")
 
-    # 循环结束后，统一更新侧边栏状态
-    with status_placeholder.container():
-        if stats_list:
-            df_stats = pd.DataFrame(stats_list)
-            st.dataframe(
-                df_stats, 
-                hide_index=True, 
-                use_container_width=True,
-                column_config={
-                    "Status": st.column_config.TextColumn("Status"),
-                }
-            )
+        # 循环结束后，统一更新侧边栏状态
+        with status_placeholder.container():
+            if stats_list:
+                df_stats = pd.DataFrame(stats_list)
+                st.dataframe(
+                    df_stats, 
+                    hide_index=True, 
+                    use_container_width=True,
+                    column_config={
+                        "Status": st.column_config.TextColumn("Status"),
+                    }
+                )
 
-    st.caption(f"Last updated: {time.strftime('%H:%M:%S')}")
-    time.sleep(2)
+        st.caption(f"Last updated: {time.strftime('%H:%M:%S')}")
+        time.sleep(2)
+except Exception:
+    pass
+
+finally:
+    # 只要脚本停止运行（包括关闭网页、刷新网页），就杀死进程
+    print("Browser closed or refreshed. Killing process...")
+    os.kill(os.getpid(), signal.SIGTERM)
