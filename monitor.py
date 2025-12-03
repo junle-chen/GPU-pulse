@@ -142,6 +142,7 @@ def parse_data(gpu_csv, proc_csv, user_txt):
     return df_gpu, df_proc
 
 placeholder = st.empty()
+time_placeholder = st.empty()
 
 try:
     while True:
@@ -160,6 +161,7 @@ try:
                 total_gpu = 0
                 free_gpu = 0
                 free_gpu_ids = "-"
+                used_gpu_info = "-"
                 
                 # 数据解析
                 df_gpu, df_proc = pd.DataFrame(), pd.DataFrame()
@@ -178,12 +180,30 @@ try:
                                 ids = [str(idx) for idx in free_df['idx']]
                             if ids:
                                 free_gpu_ids = "GPU " + ", ".join(ids)
+                        # 计算非 Free GPU 的显存使用情况，多行显示
+                        used_df = df_gpu[df_gpu['mem_used'] >= 500]
+                        if not used_df.empty:
+                            lines = []
+                            for _, row in used_df.iterrows():
+                                try:
+                                    gpu_idx = int(row['idx'])
+                                    mem_used_mb = float(row['mem_used'])
+                                    mem_total_mb = float(row['mem_total'])
+                                except Exception:
+                                    continue
+                                mem_used_g = mem_used_mb / 1024.0 if mem_total_mb > 0 else 0
+                                mem_total_g = mem_total_mb / 1024.0 if mem_total_mb > 0 else 0
+                                line = f"GPU {gpu_idx}: {int(mem_used_g)}G / {int(mem_total_g)}G"
+                                lines.append(line)
+                            if lines:
+                                used_gpu_info = "\n".join(lines)
 
                 # 存入统计列表
                 stats_list.append({
                     "Server": host_name,
                     "Free": f"{free_gpu} / {total_gpu}",
                     "Free GPUs": free_gpu_ids,
+                    "Used GPUs": used_gpu_info,
                     "Status": "🔴 Down" if err else ("🟢 OK" if free_gpu > 0 else "🟡 Full"),
                 })
 
@@ -235,17 +255,26 @@ try:
         # 循环结束后，统一更新侧边栏状态
         with status_placeholder.container():
             if stats_list:
-                df_stats = pd.DataFrame(stats_list)
-                st.dataframe(
-                    df_stats, 
-                    hide_index=True, 
-                    use_container_width=True,
-                    column_config={
-                        "Status": st.column_config.TextColumn("Status"),
-                    }
-                )
+                # 使用 Markdown 表格手动渲染，使 Used GPUs 列可以通过 <br> 多行显示
+                headers = ["Server", "Free", "Free GPUs", "Used GPUs", "Status"]
+                md_lines = [
+                    "| " + " | ".join(headers) + " |",
+                    "|" + " | ".join(["---"] * len(headers)) + "|",
+                ]
+                for row in stats_list:
+                    server = row.get("Server", "")
+                    free = row.get("Free", "")
+                    free_gpus = row.get("Free GPUs", "")
+                    used_gpus_raw = row.get("Used GPUs", "-") or "-"
+                    # 将 \n 换成 <br>，在单元格内真正换行
+                    used_gpus = used_gpus_raw.replace("\n", "<br>")
+                    status = row.get("Status", "")
+                    md_lines.append(
+                        f"| {server} | {free} | {free_gpus} | {used_gpus} | {status} |"
+                    )
+                st.markdown("\n".join(md_lines), unsafe_allow_html=True)
 
-        st.caption(f"Last updated: {time.strftime('%H:%M:%S')}")
+        time_placeholder.caption(f"Last updated: {time.strftime('%H:%M:%S')}")
         time.sleep(2)
 except Exception:
     pass
