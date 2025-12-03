@@ -79,4 +79,4 @@ cd /Users/xxx/Code/monitor
 
 ### 退出
 <img width="234" height="246" alt="image" src="https://github.com/user-attachments/assets/19183b38-e189-4dbe-bd10-8f7b06f8830d" />
-按右上角即可退出。
+按左上角即可退出。
