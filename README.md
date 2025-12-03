@@ -3,6 +3,12 @@
 - 可以看看哪个服务器的gpu空闲
 - 可以查看GPU核心谁在跑实验
 
+```
+pip install pandas streamlit
+streamlit run monitor.py
+```
+即可运行。
+
 
 # extra
 ## 优化SSH服务器连接
