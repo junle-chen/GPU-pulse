@@ -24,20 +24,9 @@ SSH_USER = None
 st.set_page_config(page_title="GPU Cluster", layout="wide", page_icon="⚡", initial_sidebar_state="expanded")
 
 # ==========================================
-# 侧边栏：控制面板 & 资源概览
+# 侧边栏：资源概览
 # ==========================================
 with st.sidebar:
-    st.header("🎮 Control Panel")
-    
-    # 1. 退出按钮
-    if st.button("❌ Quit Monitor", type="primary", use_container_width=True):
-        st.warning("Shutting down...")
-        time.sleep(1)
-        os.kill(os.getpid(), signal.SIGTERM)
-    
-    st.divider()
-    
-    # 2. 资源概览 (占位符，稍后在循环中更新)
     st.subheader("📊 Availability")
     status_placeholder = st.empty()
     st.caption("Free = Memory < 500 MiB")
