@@ -142,6 +142,7 @@ def parse_data(gpu_csv, proc_csv, user_txt):
     return df_gpu, df_proc
 
 placeholder = st.empty()
+time_placeholder = st.empty()
 
 try:
     while True:
@@ -245,7 +246,7 @@ try:
                     }
                 )
 
-        st.caption(f"Last updated: {time.strftime('%H:%M:%S')}")
+        time_placeholder.caption(f"Last updated: {time.strftime('%H:%M:%S')}")
         time.sleep(2)
 except Exception:
     pass
