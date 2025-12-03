@@ -1,5 +1,7 @@
 # GPU Monitor
-monitor your gpus in servers like nvidia-smi and find the free gpus
+- 支持查看多个主机的服务器GPU信息，类似于nvidia-smi，不过让界面美观一些
+- 可以看看哪个服务器的gpu空闲
+- 可以查看GPU核心谁在跑实验
 
 # extra
 ## 配置APP在macos,方便查看服务器gpu信息
