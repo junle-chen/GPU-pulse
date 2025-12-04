@@ -76,13 +76,9 @@ cd /Users/xxx/Code/monitor
 ### 美化图标
 
 现在桌面上已经有一个机器人图标的 App 了，双击它就会自动弹出网页。如果你想给它换个帅气的图标（比如显卡图标）：
-
-- 找一张你喜欢的 .png 图片（显卡图）。
-- 双击图片用“预览”打开，按 Cmd + C 复制图片。
 - 右键点击桌面刚做好的 GPU Monitor，选择 "显示简介" (Get Info)。
-- 可以使用gemini banana 制作或者找自己喜欢的图
-- 使用image2icon app可以制作，然后复制粘贴到(Get Info)里面
-- 点击左上角那个小的机器人图标（选中后它会发蓝光）。如下图，我找了GPU Cluster图片
+- 找一张你喜欢的 .png 图片（显卡图），或者可以使用gemini banana 制作，按 Cmd + C 复制图片（optional:使用image2icon app可以制作)
+- 点击左上角那个小的机器人图标（选中后它会发蓝光）。然后复制粘贴到(Get Info)里面。如下图，我找了GPU Cluster图片
 - <img width="167" height="133" alt="image" src="https://github.com/user-attachments/assets/53eafb99-e0af-4cae-8b5f-5df8f27366d2" />
 
 ### 退出
