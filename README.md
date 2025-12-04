@@ -22,7 +22,7 @@ Host 跳板机
   ControlPersist 10m
 
 # 2. 针对内网目标机器的优化：全部应用复用
-Host 你的内网机器
+Host 你的内网机器(example: gpu-server-*)
   ControlMaster auto
   ControlPath ~/.ssh/cm-%r@%h:%p
   ControlPersist 10m
