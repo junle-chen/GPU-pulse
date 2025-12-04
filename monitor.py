@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import subprocess
 import pandas as pd
 import time
@@ -53,10 +54,44 @@ st.markdown(
     /* 侧边栏表格样式优化 */
     [data-testid="stSidebar"] [data-testid="stDataFrame"] { font-size: 0.9em; }
     /* 增加侧边栏宽度 */
-    [data-testid="stSidebar"] { min-width: 400px; width: 400px; }
+    [data-testid="stSidebar"] {
+        min-width: 480px;
+        width: 480px;
+    }
+    /* 主内容区域自适应宽度，确保侧边栏收起后不留白 */
+    div[data-testid="block-container"],
+    .block-container {
+        max-width: 100% !important;
+        padding-left: 2rem;
+        padding-right: 2rem;
+        margin-left: 0 !important;
+        margin-right: auto !important;
+    }
 </style>
 """,
     unsafe_allow_html=True,
+)
+
+# 强制页面首次加载时展开侧边栏，避免浏览器保存折叠状态
+components.html(
+    """
+    <script>
+        const ensureSidebarOpen = () => {
+            const doc = window.parent.document;
+            const sidebar = doc.querySelector('section[data-testid="stSidebar"]');
+            if (!sidebar || sidebar.getAttribute('aria-expanded') === 'true') { return; }
+            const toggle = doc.querySelector('[data-testid="collapsedControl"]')
+                || doc.querySelector('button[title="Show sidebar"]')
+                || doc.querySelector('button[kind="header"]')
+                || doc.querySelector('[data-testid="baseButton-header"]');
+            if (toggle) { toggle.click(); }
+        };
+        setTimeout(ensureSidebarOpen, 100);
+        setTimeout(ensureSidebarOpen, 1000);
+    </script>
+    """,
+    height=0,
+    width=0,
 )
 
 
