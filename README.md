@@ -4,16 +4,8 @@
 - 可以看看哪个服务器的gpu空闲
 - 可以查看GPU核心谁在跑实验
 
-``hosts.txt``,然后每行是一个主机名字，可以添加或者删除主机，**注意服务器为你配置了公钥登录，你可以通过本地ssh私钥登陆，即(ssh xxx)，不需要密码，直接进入server.**
-
-```
-pip install pandas streamlit
-streamlit run monitor.py
-```
-
-即可运行。
-
-# extra
+``hosts.txt``,然后每行是一个主机名字，可以添加或者删除主机，主机的名字可以通过在~/.ssh/config文件寻找（Host后面的内容即是）。
+**注意服务器为你配置了公钥登录，你可以通过本地ssh私钥登陆，即(ssh xxx)，不需要密码，直接进入server.**
 
 ## 优化SSH服务器连接
 
@@ -39,6 +31,20 @@ Host 你的内网机器
 复制到~/.ssh/config最后面
 
 作用： 登录一次服务器后，接下来的 10 分钟内，如果再次连接同一台服务器（或者通过它跳转），不需要再输入密码或进行密钥验证，连接会“秒连”，我在测试的是否，如果不优化连接，频繁连接的话，会被检测，然后被拒绝连接。
+
+
+```
+pip install pandas streamlit
+```
+
+```
+streamlit run monitor.py
+```
+即可运行。
+
+# extra
+
+
 
 ## 配置APP在macos,方便查看服务器gpu信息
 
