@@ -30,6 +30,17 @@ Host gpu-server-*
 
 复制到~/.ssh/config最后面
 
+- jump-host为跳板机
+- gpu-server-*对应各个服务器的host，例如在你的ssh config里面，有
+```
+Host gpu-server-1
+  HostName xxx
+  User your-username
+  Port 22
+  ProxyCommand ssh -q -W %h:%p jump-host
+  IdentityFile ~/.ssh/your_key
+```
+这个`gpu-server-*`可以匹配gpu-server-1，gpu-server-2，......内容，这样子就能将这些机器应用连接复用。
 作用： 登录一次服务器后，接下来的 10 分钟内，如果再次连接同一台服务器（或者通过它跳转），不需要再输入密码或进行密钥验证，连接会“秒连”，我在测试的是否，如果不优化连接，频繁连接的话，会被检测，然后被拒绝连接。
 
 
