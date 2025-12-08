@@ -102,3 +102,75 @@ cd /Users/xxx/Code/monitor
 ### 退出
 
 关闭网页即可。
+
+## windows
+
+### 制作启动脚本 
+我们需要创建一个 .bat 文件来执行命令。
+
+在你的代码目录（例如 D:\Code\monitor）或是桌面上，右键 -> 新建 -> 文稿/文本文件。
+
+将文件重命名为 start_monitor.bat (注意后缀要是 .bat，不能是 .txt)。
+
+右键点击这个文件，选择 编辑 (或者用记事本打开)，输入以下内容：
+
+方案 A：如果你直接在系统环境里装了 streamlit
+
+```
+@echo off
+:: 切换到你的代码目录 (/d 是为了确保能跨盘符切换，比如从 C 盘切到 D 盘)
+cd /d "D:\Path\To\Your\Code\monitor"
+
+:: 运行 Streamlit (如果 where streamlit 有输出路径，直接写 streamlit 即可)
+streamlit run monitor.py
+pause
+```
+方案 B：如果你使用 Conda 环境 (更推荐，更稳定)
+
+```
+@echo off
+:: 切换到代码目录
+cd /d "C:\Users\xxx\Code\monitor"
+
+:: 激活 conda 环境 (将 'your_env_name' 换成你的环境名，如 base)
+call conda activate your_env_name
+
+:: 运行脚本
+streamlit run monitor.py
+```
+保存并关闭。
+
+测试一下： 双击这个 start_monitor.bat，看看能不能成功弹出一个黑框框并打开浏览器。如果可以，继续下一步
+
+### 制作“APP”快捷方式
+
+现在的 .bat 文件虽然能用，但是图标很丑（是个齿轮），而且不能直接换图标。我们需要做一个快捷方式。
+
+右键点击刚才做好的 start_monitor.bat。
+
+选择 “发送到” -> “桌面快捷方式”。
+
+现在桌面上多了一个 start_monitor.bat - 快捷方式。
+
+你可以把它重命名为 GPU Monitor。
+
+### 美化图标 (Change Icon)
+Windows 的图标机制和 Mac 不同，它需要 .ico 格式，不能直接粘贴 .png。
+
+准备图标：
+
+找一张你喜欢的显卡图片（PNG/JPG）。
+
+打开一个在线转换网站（搜索 "png to ico"），把图片转成 .ico 文件并下载。
+
+更换图标：
+
+右键点击桌面上的 GPU Monitor 快捷方式。
+
+选择 “属性” (Properties)。
+
+点击 “更改图标...” (Change Icon) 按钮。
+
+点击 “浏览...” (Browse)，找到你刚才下载的 .ico 文件。
+
+一路点击 “确定”。
