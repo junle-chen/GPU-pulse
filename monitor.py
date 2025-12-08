@@ -382,7 +382,7 @@ try:
                 st.markdown("\n".join(md_lines), unsafe_allow_html=True)
 
         time_placeholder.caption(f"Last updated: {time.strftime('%H:%M:%S')}")
-        time.sleep(2)
+        time.sleep(20)
 except Exception:
     pass
 
