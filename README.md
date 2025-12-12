@@ -7,7 +7,7 @@
 ``hosts.txt``,然后每行是一个主机名字，可以添加或者删除主机，主机的名字可以通过在~/.ssh/config文件寻找（Host后面的内容即是）。
 **注意服务器为你配置了公钥登录，你可以通过本地ssh私钥登陆，即(ssh xxx)，不需要密码，直接进入server.**
 
-## 优化SSH服务器连接（macos, windows暂时先不配置）
+## 优化SSH服务器连接 for macos（windows暂时先不配置）
 
 ```bash
 open ~/.ssh/config
