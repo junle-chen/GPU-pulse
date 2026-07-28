@@ -9,7 +9,7 @@ configured SSH aliases.
   interval (10 seconds by default) while the popover is open.
 - Reuses one multiplexed SSH connection per host (`ControlPersist=60`) instead of performing a full handshake every 10 seconds.
 - Reads only `nvidia-smi` over the SSH aliases already configured on the Mac.
-- Shows glass server cards in a two-column scrolling layout, each listing GPU #0 through GPU #7.
+- Shows glass server cards in a two-column layout, each listing GPU #0 through GPU #7. Scrolling and a compact scrollbar appear only when more than four servers are selected.
 - Each GPU uses one horizontal bar: length represents VRAM usage and color represents utilization.
 - Bar color represents utilization: green below 50%, yellow from 50–79%, and red at 80% or above. No usage numbers are printed; each card labels the bar column as `MEM`.
 - A single compact `UTIL` green-to-yellow-to-red gradient legend appears above the card grid.

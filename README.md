@@ -24,7 +24,8 @@ servers to monitor. Dashboard labels use the part before the first dot, so
 
 - Four servers are shown in a compact 2×2 grid.
 - Additional servers continue in the same two-column grid with vertical
-  scrolling.
+  scrolling and a compact scrollbar. Four or fewer servers do not show a
+  scrollbar.
 - Each row represents one GPU. Bar length is memory usage; green, yellow, and
   red represent GPU utilization.
 - `MINE` highlights GPUs running processes owned by your SSH login user.

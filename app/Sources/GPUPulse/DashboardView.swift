@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 struct DashboardView: View {
     @ObservedObject var store: MonitorStore
@@ -20,21 +21,55 @@ struct DashboardView: View {
 
             if store.servers.isEmpty {
                 NoServersView()
+            } else if store.servers.count <= 4 {
+                serverGrid
             } else {
-                ScrollView(.vertical) {
-                    LazyVGrid(columns: columns, spacing: 12) {
-                        ForEach(store.servers) { server in
-                            ServerCard(server: server)
-                        }
-                    }
-                    .padding(.horizontal, 1)
-                    .padding(.bottom, 8)
+                ScrollView(.vertical, showsIndicators: true) {
+                    serverGrid
+                        .padding(.horizontal, 1)
+                        .padding(.bottom, 8)
+                        .background(CompactScrollerConfigurator())
                 }
             }
         }
         .padding(10)
         .frame(width: 640, height: 454)
         .preferredColorScheme(.light)
+    }
+
+    private var serverGrid: some View {
+        LazyVGrid(columns: columns, spacing: 12) {
+            ForEach(store.servers) { server in
+                ServerCard(server: server)
+            }
+        }
+    }
+}
+
+private struct CompactScrollerConfigurator: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSView {
+        let view = NSView(frame: .zero)
+        configureAfterLayout(from: view)
+        return view
+    }
+
+    func updateNSView(_ nsView: NSView, context: Context) {
+        configureAfterLayout(from: nsView)
+    }
+
+    private func configureAfterLayout(from view: NSView) {
+        DispatchQueue.main.async {
+            var ancestor = view.superview
+            while let current = ancestor {
+                if let scrollView = current as? NSScrollView {
+                    scrollView.scrollerStyle = .overlay
+                    scrollView.autohidesScrollers = true
+                    scrollView.verticalScroller?.controlSize = .small
+                    return
+                }
+                ancestor = current.superview
+            }
+        }
     }
 }
 
