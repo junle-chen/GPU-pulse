@@ -335,6 +335,18 @@ private struct ServerDetailView: View {
     private var processCount: Int {
         server.gpus.map(\.processes.count).reduce(0, +)
     }
+    private var activeGPUCount: Int {
+        server.gpus.filter { !$0.processes.isEmpty }.count
+    }
+    private var listContentHeight: CGFloat {
+        CGFloat(processCount * 23 + max(activeGPUCount - 1, 0) * 5)
+    }
+    private var listHeight: CGFloat {
+        min(max(listContentHeight, 23), 430)
+    }
+    private var needsScrolling: Bool {
+        listContentHeight > listHeight
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -367,7 +379,7 @@ private struct ServerDetailView: View {
             } else {
                 processHeader
 
-                ScrollView(.vertical, showsIndicators: processCount > 7) {
+                ScrollView(.vertical, showsIndicators: needsScrolling) {
                     LazyVStack(spacing: 5) {
                         ForEach(server.gpus) { gpu in
                             if !gpu.processes.isEmpty {
@@ -377,7 +389,7 @@ private struct ServerDetailView: View {
                     }
                     .padding(.trailing, 10)
                 }
-                .frame(maxHeight: 244)
+                .frame(height: listHeight)
             }
         }
         .padding(13)

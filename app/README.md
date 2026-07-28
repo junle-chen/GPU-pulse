@@ -25,7 +25,11 @@ configured SSH aliases.
 - Processes from the same GPU share a compact tinted group; the GPU index is
   printed only on its first row. Fixed-width monospaced `TIME` and `MEM`
   columns remain aligned even when the panel scrolls.
+- The detail panel grows with its current content so a typical eight-GPU server
+  is visible at once. Scrolling is used only when the process list would exceed
+  a safe on-screen height.
 - GPU data refreshes every 10 seconds only while the popover is open. Closing it pauses polling; reopening refreshes immediately.
+- Clicking the desktop or another app closes the dashboard popover.
 - Right-click the menu-bar icon to quit, toggle Launch at Login, or choose a 5/10/30/60-second refresh interval.
 - The **Servers…** settings window lists explicit `Host` entries from
   `~/.ssh/config` and allows any number of selections. Only selected hosts are

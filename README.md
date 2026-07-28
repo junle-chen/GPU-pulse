@@ -34,6 +34,8 @@ servers to monitor. Dashboard labels use the part before the first dot, so
   name, elapsed time, and GPU memory. PID is not displayed.
 - Multiple processes on the same GPU share a compact tinted group, with the GPU
   index shown only once and fixed-width `TIME` and `MEM` columns.
+- The detail panel grows to show a typical eight-GPU server at once and scrolls
+  only when the process list would exceed a safe screen height.
 - Left-click the menu-bar icon to open the monitor.
 - Right-click it to change the refresh interval, toggle Launch at Login, or
   quit GPU Pulse.
@@ -42,6 +44,7 @@ servers to monitor. Dashboard labels use the part before the first dot, so
   host is contacted.
 - Polling runs only while the panel is open. Closing the panel pauses SSH
   queries.
+- Clicking the desktop or another app automatically closes the panel.
 
 ## Install
 
