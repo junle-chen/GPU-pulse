@@ -170,6 +170,7 @@ private struct UtilLegend: View {
 
 private struct ServerCard: View {
     let server: ServerSnapshot
+    @State private var isShowingDetails = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 7) {
@@ -189,6 +190,17 @@ private struct ServerCard: View {
                 Text(server.config.displayName.uppercased())
                     .font(.system(size: 13, weight: .semibold))
                 Spacer()
+                Button("Detail") {
+                    isShowingDetails.toggle()
+                }
+                .buttonStyle(.plain)
+                .font(.system(size: 8, weight: .semibold))
+                .foregroundStyle(Color.black.opacity(server.gpus.isEmpty ? 0.24 : 0.45))
+                .disabled(server.gpus.isEmpty)
+                .help("Show processes on \(server.config.displayName)")
+                .popover(isPresented: $isShowingDetails, arrowEdge: .trailing) {
+                    ServerDetailView(server: server)
+                }
                 Text("MEM")
                     .font(.system(size: 8, weight: .semibold))
                     .tracking(0.8)
@@ -243,7 +255,6 @@ private struct ServerCard: View {
 
 private struct GPURow: View {
     let gpu: GPUStat
-    @State private var isShowingDetails = false
 
     private let ownershipColor = Color(red: 0.37, green: 0.39, blue: 0.94)
 
@@ -287,18 +298,6 @@ private struct GPURow: View {
                 }
             }
             .frame(height: 7)
-
-            Button("Detail") {
-                isShowingDetails.toggle()
-            }
-            .buttonStyle(.plain)
-            .font(.system(size: 7.5, weight: .semibold))
-            .foregroundStyle(Color.black.opacity(gpu.processes.isEmpty ? 0.34 : 0.56))
-            .frame(width: 31, alignment: .trailing)
-            .help("Show processes using GPU #\(gpu.index)")
-            .popover(isPresented: $isShowingDetails, arrowEdge: .trailing) {
-                GPUDetailView(gpu: gpu)
-            }
         }
         .padding(.horizontal, 3)
         .frame(height: 15)
@@ -312,11 +311,14 @@ private struct GPURow: View {
     }
 }
 
-private struct GPUDetailView: View {
-    let gpu: GPUStat
+private struct ServerDetailView: View {
+    let server: ServerSnapshot
 
     private let panelColor = Color(red: 0.075, green: 0.082, blue: 0.105)
     private let secondaryText = Color.white.opacity(0.55)
+    private var processCount: Int {
+        server.gpus.map(\.processes.count).reduce(0, +)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -324,19 +326,19 @@ private struct GPUDetailView: View {
                 Image(systemName: "cpu")
                     .font(.system(size: 11, weight: .medium))
                     .foregroundStyle(Color(red: 0.48, green: 0.58, blue: 1.0))
-                Text("GPU #\(gpu.index)")
+                Text(server.config.displayName.uppercased())
                     .font(.system(size: 12, weight: .bold, design: .monospaced))
-                Text(gpu.name)
+                Text("GPU PROCESSES")
                     .font(.system(size: 10, weight: .medium))
                     .foregroundStyle(secondaryText)
                     .lineLimit(1)
                 Spacer()
-                Text("\(gpu.processes.count) \(gpu.processes.count == 1 ? "PROCESS" : "PROCESSES")")
+                Text("\(processCount) \(processCount == 1 ? "PROCESS" : "PROCESSES")")
                     .font(.system(size: 8, weight: .semibold, design: .monospaced))
                     .foregroundStyle(secondaryText)
             }
 
-            if gpu.processes.isEmpty {
+            if processCount == 0 {
                 HStack(spacing: 7) {
                     Circle()
                         .fill(Color(red: 0.30, green: 0.78, blue: 0.48))
@@ -352,26 +354,30 @@ private struct GPUDetailView: View {
                     .fill(Color.white.opacity(0.10))
                     .frame(height: 1)
 
-                ScrollView(.vertical, showsIndicators: gpu.processes.count > 5) {
+                ScrollView(.vertical, showsIndicators: processCount > 7) {
                     LazyVStack(spacing: 0) {
-                        ForEach(gpu.processes) { process in
-                            ProcessDetailRow(process: process)
+                        ForEach(server.gpus) { gpu in
+                            ForEach(gpu.processes) { process in
+                                ProcessDetailRow(gpuIndex: gpu.index, process: process)
+                            }
                         }
                     }
                 }
-                .frame(maxHeight: 176)
+                .frame(maxHeight: 224)
             }
         }
         .padding(13)
-        .frame(width: 410)
+        .frame(width: 450)
         .foregroundStyle(Color.white.opacity(0.92))
         .background(panelColor)
     }
 
     private var processHeader: some View {
         HStack(spacing: 8) {
+            Text("GPU")
+                .frame(width: 30, alignment: .leading)
             Text("USER")
-                .frame(width: 72, alignment: .leading)
+                .frame(width: 68, alignment: .leading)
             Text("PROCESS")
                 .frame(maxWidth: .infinity, alignment: .leading)
             Text("TIME")
@@ -385,10 +391,15 @@ private struct GPUDetailView: View {
 }
 
 private struct ProcessDetailRow: View {
+    let gpuIndex: Int
     let process: GPUProcessStat
 
     var body: some View {
         HStack(spacing: 8) {
+            Text("#\(gpuIndex)")
+                .foregroundStyle(Color(red: 0.48, green: 0.58, blue: 1.0))
+                .frame(width: 30, alignment: .leading)
+
             HStack(spacing: 5) {
                 RoundedRectangle(cornerRadius: 1, style: .continuous)
                     .fill(
@@ -400,7 +411,7 @@ private struct ProcessDetailRow: View {
                 Text(process.username)
                     .lineLimit(1)
             }
-            .frame(width: 72, alignment: .leading)
+            .frame(width: 68, alignment: .leading)
 
             Text(process.processName)
                 .lineLimit(1)
