@@ -193,15 +193,10 @@ private struct ServerCard: View {
                 Button {
                     isShowingDetails.toggle()
                 } label: {
-                    HStack(spacing: 3) {
-                        Image(systemName: "list.bullet.rectangle")
-                            .font(.system(size: 8, weight: .semibold))
-                        Text("DETAIL")
-                            .font(.system(size: 7.5, weight: .bold))
-                            .tracking(0.35)
-                    }
+                    Image(systemName: "line.3.horizontal")
+                        .font(.system(size: 9, weight: .semibold))
                     .foregroundStyle(Color(red: 0.31, green: 0.34, blue: 0.78))
-                    .padding(.horizontal, 6)
+                    .frame(width: 23)
                     .frame(height: 18)
                     .background(
                         Capsule()
@@ -373,7 +368,7 @@ private struct ServerDetailView: View {
                 processHeader
 
                 ScrollView(.vertical, showsIndicators: processCount > 7) {
-                    LazyVStack(spacing: 7) {
+                    LazyVStack(spacing: 5) {
                         ForEach(server.gpus) { gpu in
                             if !gpu.processes.isEmpty {
                                 GPUProcessGroup(gpu: gpu)
@@ -393,6 +388,8 @@ private struct ServerDetailView: View {
 
     private var processHeader: some View {
         HStack(spacing: 8) {
+            Text("GPU")
+                .frame(width: 28, alignment: .leading)
             Text("USER")
                 .frame(width: 76, alignment: .leading)
             Text("PROCESS")
@@ -424,40 +421,37 @@ private struct GPUProcessGroup: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack(spacing: 6) {
-                RoundedRectangle(cornerRadius: 1, style: .continuous)
-                    .fill(accentColor)
-                    .frame(width: 2, height: 11)
-                Text("GPU #\(gpu.index)")
-                    .font(.system(size: 9, weight: .bold, design: .monospaced))
-                    .foregroundStyle(accentColor)
-                Spacer()
-                Text("\(gpu.processes.count) \(gpu.processes.count == 1 ? "PROCESS" : "PROCESSES")")
-                    .font(.system(size: 7.5, weight: .semibold, design: .monospaced))
-                    .foregroundStyle(Color.white.opacity(0.42))
-            }
-            .padding(.horizontal, 9)
-            .frame(height: 23)
-            .background(accentColor.opacity(0.10))
-
-            ForEach(gpu.processes) { process in
-                ProcessDetailRow(process: process)
+            ForEach(Array(gpu.processes.enumerated()), id: \.element.id) { offset, process in
+                ProcessDetailRow(
+                    gpuIndex: gpu.index,
+                    showsGPUIndex: offset == 0,
+                    accentColor: accentColor,
+                    process: process
+                )
             }
         }
-        .background(Color.white.opacity(0.018))
+        .background(accentColor.opacity(0.045))
         .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 6, style: .continuous)
-                .stroke(accentColor.opacity(0.15), lineWidth: 0.7)
+                .stroke(accentColor.opacity(0.13), lineWidth: 0.7)
         )
     }
 }
 
 private struct ProcessDetailRow: View {
+    let gpuIndex: Int
+    let showsGPUIndex: Bool
+    let accentColor: Color
     let process: GPUProcessStat
 
     var body: some View {
         HStack(spacing: 8) {
+            Text(showsGPUIndex ? "#\(gpuIndex)" : "")
+                .fontWeight(.bold)
+                .foregroundStyle(accentColor)
+                .frame(width: 28, alignment: .leading)
+
             HStack(spacing: 5) {
                 RoundedRectangle(cornerRadius: 1, style: .continuous)
                     .fill(

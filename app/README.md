@@ -22,8 +22,9 @@ configured SSH aliases.
   process name, elapsed time, and GPU memory without exposing PID. Process
   details are collected in the existing refresh query, so opening the panel
   does not create another SSH connection.
-- Processes are grouped into visually distinct GPU sections. Fixed-width
-  monospaced `TIME` and `MEM` columns remain aligned even when the panel scrolls.
+- Processes from the same GPU share a compact tinted group; the GPU index is
+  printed only on its first row. Fixed-width monospaced `TIME` and `MEM`
+  columns remain aligned even when the panel scrolls.
 - GPU data refreshes every 10 seconds only while the popover is open. Closing it pauses polling; reopening refreshes immediately.
 - Right-click the menu-bar icon to quit, toggle Launch at Login, or choose a 5/10/30/60-second refresh interval.
 - The **Servers…** settings window lists explicit `Host` entries from
