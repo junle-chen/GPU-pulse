@@ -193,22 +193,19 @@ private struct ServerCard: View {
                 Button {
                     isShowingDetails.toggle()
                 } label: {
-                    Image(systemName: "line.3.horizontal")
-                        .font(.system(size: 9, weight: .semibold))
-                    .foregroundStyle(Color(red: 0.31, green: 0.34, blue: 0.78))
-                    .frame(width: 23)
-                    .frame(height: 18)
-                    .background(
-                        Capsule()
-                            .fill(Color(red: 0.37, green: 0.39, blue: 0.94).opacity(0.09))
-                    )
-                    .overlay(
-                        Capsule()
-                            .stroke(
-                                Color(red: 0.37, green: 0.39, blue: 0.94).opacity(0.20),
-                                lineWidth: 0.7
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 6, style: .continuous)
+                            .fill(Color.white.opacity(0.52))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                    .stroke(Color.black.opacity(0.07), lineWidth: 0.6)
                             )
-                    )
+                        Image(systemName: "line.3.horizontal")
+                            .font(.system(size: 9, weight: .semibold))
+                            .foregroundStyle(Color.black.opacity(0.46))
+                    }
+                    .frame(width: 21, height: 21)
+                    .shadow(color: Color.black.opacity(0.08), radius: 2, y: 1)
                 }
                 .buttonStyle(.plain)
                 .opacity(server.gpus.isEmpty ? 0.36 : 1)
