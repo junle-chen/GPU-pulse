@@ -17,11 +17,11 @@ configured SSH aliases.
 - Click the menu-bar item to show or hide the monitor.
 - Use the refresh button beside the UTIL legend to fetch the latest GPU data immediately.
 - GPUs used by the current SSH login user are marked with a slim indigo rail, bold GPU label, and a faint indigo row background; the compact legend reads `MINE`.
-- Each server card has one compact **Detail** action. Its nvitop-style panel
-  combines every active process on that server and shows GPU index, username,
-  process name, elapsed time, and GPU memory without exposing PID. Process
-  details are collected in the existing refresh query, so opening the panel
-  does not create another SSH connection.
+- Each server card has one compact indigo three-line detail button beside
+  `MEM`. Its nvitop-style panel combines every active process on that server
+  and shows GPU index, username, process name, elapsed time, and GPU memory
+  without exposing PID. Process details are collected in the existing refresh
+  query, so opening the panel does not create another SSH connection.
 - Processes from the same GPU share a compact tinted group; the GPU index is
   printed only on its first row. Fixed-width monospaced `TIME` and `MEM`
   columns remain aligned even when the panel scrolls.

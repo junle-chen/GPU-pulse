@@ -20,6 +20,28 @@ lists the explicit `Host` entries from `~/.ssh/config` and lets you choose the
 servers to monitor. Dashboard labels use the part before the first dot, so
 `zxcpu1.cse.example.edu` appears as `ZXCPU1`.
 
+## GPU Process Details
+
+![GPU Pulse server detail showing privacy-safe example GPU processes](assets/gpu-pulse-detail.png)
+
+Click the small indigo **three-line button** beside `MEM` in a server card
+header. It opens the latest process snapshot for that server without starting
+another SSH connection.
+
+- **GPU** is the device index (`#0` through `#7`). When one GPU has multiple
+  processes, its index appears only on the first row and the rows share one
+  tinted group.
+- **USER** is the remote operating-system user that owns the process. The slim
+  indigo rail marks the current SSH login user.
+- **PROCESS** is the executable reported by the remote process table.
+- **TIME** is elapsed process runtime, not a start timestamp.
+- **MEM** is GPU memory used by that process. Its green/yellow/red text follows
+  the parent GPU’s current utilization color; it does not rate the memory value
+  itself.
+
+PID is intentionally not displayed. The screenshot uses generic server,
+username, and process data.
+
 ## What It Shows
 
 - Four servers are shown in a compact 2×2 grid.
@@ -29,9 +51,8 @@ servers to monitor. Dashboard labels use the part before the first dot, so
 - Each row represents one GPU. Bar length is memory usage; green, yellow, and
   red represent GPU utilization.
 - `MINE` highlights GPUs running processes owned by your SSH login user.
-- Each server card has one **Detail** action. It opens a compact nvitop-style
-  table covering all GPUs on that server, with GPU index, username, process
-  name, elapsed time, and GPU memory. PID is not displayed.
+- Each server card has one indigo three-line detail button. It opens a compact
+  nvitop-style table covering all GPUs on that server.
 - Multiple processes on the same GPU share a compact tinted group, with the GPU
   index shown only once and fixed-width `TIME` and `MEM` columns.
 - Process `MEM` values use the same green/yellow/red utilization color as their
@@ -66,8 +87,8 @@ Remote hosts must provide `nvidia-smi` and key-based SSH access.
 
 - **Open/close:** left-click the menu-bar chart icon.
 - **Refresh now:** click the circular arrow in the upper-right corner.
-- **GPU process details:** click **Detail** in a server card header. Opening it
-  uses the latest refresh snapshot and does not create another SSH connection.
+- **GPU process details:** click the indigo three-line button beside `MEM` in a
+  server card header.
 - **Servers:** right-click the menu-bar icon, choose **Servers…**, then select
   any number of hosts. The selection is stored only on this Mac.
 - **Refresh frequency:** choose 5, 10, 30, or 60 seconds. The default is 10
