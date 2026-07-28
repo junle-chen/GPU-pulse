@@ -15,8 +15,9 @@ uploaded elsewhere.
 
 ![GPU Pulse dashboard showing four generic servers](assets/gpu-pulse-dashboard.png)
 
-The screenshot uses generic `SERVER 1–4` labels. Real SSH aliases stay in the
-local `servers.json` file and are never embedded in repository images.
+The screenshot uses generic `SERVER 1–4` labels for privacy. At runtime, the
+app reads `~/.ssh/config`, finds the four configured `Host` names beginning
+with `zxcpu1` through `zxcpu4`, and displays them as `ZXCPU1–4`.
 
 ## What It Shows
 
@@ -37,23 +38,11 @@ local `servers.json` file and are never embedded in repository images.
 2. Unzip it and move `GPU Pulse.app` into `/Applications`.
 3. Control-click the app and choose **Open** on the first launch if macOS asks
    you to confirm the locally signed build.
-4. Create the local server configuration:
 
-   ```zsh
-   mkdir -p "$HOME/Library/Application Support/GPU Pulse"
-   cp app/servers.example.json \
-     "$HOME/Library/Application Support/GPU Pulse/servers.json"
-   ```
-
-5. Edit `servers.json` locally with your own display names and SSH aliases, then
-   verify each alias works without an interactive password prompt:
-
-   ```zsh
-   ssh gpu-server-1 nvidia-smi
-   ```
-
-Do not commit your real `servers.json`. GPU Pulse requires macOS 13 or newer.
-Remote hosts must provide `nvidia-smi` and key-based SSH access.
+GPU Pulse automatically reads the matching `zxcpu1` through `zxcpu4` host names
+from your existing `~/.ssh/config`; no separate app configuration is needed. It
+requires macOS 13 or newer. Remote hosts must provide `nvidia-smi` and
+key-based SSH access.
 
 ## Usage
 
@@ -77,10 +66,8 @@ cd app
 swift build -c release
 ```
 
-Runtime server settings are read from
-`~/Library/Application Support/GPU Pulse/servers.json`. The repository includes
-only [`app/servers.example.json`](app/servers.example.json) with placeholder
-aliases.
+The monitored hosts are discovered from the `Host` entries in your local
+`~/.ssh/config`; full host names are not embedded in the app.
 
 ## Repository Layout
 

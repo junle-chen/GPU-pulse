@@ -1,38 +1,49 @@
 import Foundation
 import SwiftUI
 
-struct ServerConfig: Identifiable, Hashable, Codable {
+struct ServerConfig: Identifiable, Hashable {
     let id: String
     let displayName: String
     let host: String
 
-    static let all: [ServerConfig] = load()
-
-    static let configURL: URL = {
-        let applicationSupport = FileManager.default.urls(
-            for: .applicationSupportDirectory,
-            in: .userDomainMask
-        ).first!
-        return applicationSupport
-            .appendingPathComponent("GPU Pulse", isDirectory: true)
-            .appendingPathComponent("servers.json")
+    static let all: [ServerConfig] = {
+        let configuredAliases = sshHostAliases()
+        return (1...4).map { index in
+            let shortName = "zxcpu\(index)"
+            let host = configuredAliases.first {
+                let candidate = $0.lowercased()
+                return candidate == shortName || candidate.hasPrefix("\(shortName).")
+            } ?? shortName
+            return ServerConfig(
+                id: shortName,
+                displayName: shortName,
+                host: host
+            )
+        }
     }()
 
-    private static let exampleServers: [ServerConfig] = (1...4).map { index in
-        ServerConfig(
-            id: "server-\(index)",
-            displayName: "SERVER \(index)",
-            host: "gpu-server-\(index)"
-        )
-    }
-
-    private static func load() -> [ServerConfig] {
-        guard let data = try? Data(contentsOf: configURL),
-              let servers = try? JSONDecoder().decode([ServerConfig].self, from: data),
-              !servers.isEmpty else {
-            return exampleServers
+    private static func sshHostAliases() -> [String] {
+        let configURL = FileManager.default.homeDirectoryForCurrentUser
+            .appendingPathComponent(".ssh/config")
+        guard let contents = try? String(contentsOf: configURL, encoding: .utf8) else {
+            return []
         }
-        return servers
+
+        return contents
+            .split(whereSeparator: \.isNewline)
+            .flatMap { rawLine -> [String] in
+                let line = rawLine
+                    .split(separator: "#", maxSplits: 1, omittingEmptySubsequences: false)[0]
+                    .trimmingCharacters(in: .whitespaces)
+                let fields = line.split(whereSeparator: \.isWhitespace)
+                guard fields.first?.lowercased() == "host" else { return [] }
+                return fields.dropFirst().compactMap { field in
+                    let alias = String(field)
+                    return alias.rangeOfCharacter(from: CharacterSet(charactersIn: "*?!")) == nil
+                        ? alias
+                        : nil
+                }
+            }
     }
 }
 

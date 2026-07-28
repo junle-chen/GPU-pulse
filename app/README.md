@@ -26,8 +26,8 @@ configured SSH aliases.
 swift build -c release
 ```
 
-Copy `servers.example.json` to
-`~/Library/Application Support/GPU Pulse/servers.json`, replace the placeholder
-hosts locally, and restart the app. Never commit the real configuration.
+The app reads `~/.ssh/config` and automatically selects the four exact `Host`
+names beginning with `zxcpu1` through `zxcpu4`. The UI displays only
+`ZXCPU1–4`; full host names are never embedded in the app.
 
 The packaged `.app` in the deliverables is ad-hoc signed for local use.

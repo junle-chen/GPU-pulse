@@ -14,8 +14,9 @@ GPU Pulse 是一款简洁的原生 macOS 菜单栏应用，用于查看多台服
 
 ![显示四台通用服务器的 GPU Pulse 面板](assets/gpu-pulse-dashboard.png)
 
-截图只使用 `SERVER 1–4` 这类通用名称。真实 SSH 别名仅保存在本机
-`servers.json` 中，不会写入仓库图片或应用二进制。
+截图出于隐私考虑使用 `SERVER 1–4` 这类通用名称。应用运行时会读取
+`~/.ssh/config`，自动寻找以 `zxcpu1` 至 `zxcpu4` 开头的四个 `Host`
+名称，并在界面中简洁显示为 `ZXCPU1–4`。
 
 ## 面板信息
 
@@ -34,22 +35,9 @@ GPU Pulse 是一款简洁的原生 macOS 菜单栏应用，用于查看多台服
 2. 解压并把 `GPU Pulse.app` 移动到 `/Applications`。
 3. 如果 macOS 首次启动时拦截本地签名版本，请按住 Control 点击应用并选择
    **打开**。
-4. 创建本机服务器配置：
 
-   ```zsh
-   mkdir -p "$HOME/Library/Application Support/GPU Pulse"
-   cp app/servers.example.json \
-     "$HOME/Library/Application Support/GPU Pulse/servers.json"
-   ```
-
-5. 在本机编辑 `servers.json`，填入自己的显示名称和 SSH 别名，然后确认每个
-   别名都能免交互密码运行：
-
-   ```zsh
-   ssh gpu-server-1 nvidia-smi
-   ```
-
-不要提交真实的 `servers.json`。GPU Pulse 需要 macOS 13 或更高版本；远程
+GPU Pulse 会自动读取本机现有 `~/.ssh/config` 中与 `zxcpu1` 至 `zxcpu4`
+匹配的 Host 名称，不需要单独配置应用。应用需要 macOS 13 或更高版本；远程
 服务器需要提供 `nvidia-smi` 和基于密钥的 SSH 登录。
 
 ## 使用方法
@@ -72,9 +60,8 @@ cd app
 swift build -c release
 ```
 
-运行时服务器配置来自
-`~/Library/Application Support/GPU Pulse/servers.json`。仓库中的
-[`app/servers.example.json`](app/servers.example.json) 只包含占位别名。
+应用从本机 `~/.ssh/config` 的 `Host` 配置中发现监控服务器，完整主机名不会
+写入应用。
 
 ## 仓库结构
 
