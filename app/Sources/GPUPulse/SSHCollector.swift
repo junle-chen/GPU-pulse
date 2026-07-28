@@ -1,8 +1,28 @@
 import Foundation
 
 enum SSHCollector {
-    private static let ownedMarker = "__OWNED_GPU_UUIDS__"
-    private static let query = "nvidia-smi --query-gpu=index,uuid,name,memory.used,memory.total,utilization.gpu --format=csv,noheader,nounits; printf \"%s\\n\" \"\(ownedMarker)\"; me=$(id -un); nvidia-smi --query-compute-apps=gpu_uuid,pid --format=csv,noheader,nounits 2>/dev/null | while IFS=, read -r uuid pid; do uuid=$(printf \"%s\" \"$uuid\" | xargs); pid=$(printf \"%s\" \"$pid\" | xargs); owner=$(ps -o user:64= -p \"$pid\" | xargs); if [ \"$owner\" = \"$me\" ]; then printf \"%s\\n\" \"$uuid\"; fi; done; true"
+    private static let processMarker = "__GPU_PROCESSES__"
+    private static let query = """
+    nvidia-smi --query-gpu=index,uuid,name,memory.used,memory.total,utilization.gpu --format=csv,noheader,nounits
+    printf "%s\\n" "\(processMarker)"
+    me=$(id -un)
+    nvidia-smi --query-compute-apps=gpu_uuid,pid,used_memory,process_name --format=csv,noheader,nounits 2>/dev/null | while IFS=, read -r uuid pid memory process_name; do
+        uuid=$(printf "%s" "$uuid" | xargs)
+        pid=$(printf "%s" "$pid" | xargs)
+        memory=$(printf "%s" "$memory" | xargs)
+        fallback=$(printf "%s" "$process_name" | xargs)
+        [ -n "$pid" ] || continue
+        owner=$(ps -o user:64= -p "$pid" 2>/dev/null | xargs)
+        elapsed=$(ps -o etime= -p "$pid" 2>/dev/null | xargs)
+        command=$(ps -o comm= -p "$pid" 2>/dev/null | xargs)
+        [ -n "$owner" ] || continue
+        [ -n "$command" ] || command="$fallback"
+        is_mine=0
+        [ "$owner" = "$me" ] && is_mine=1
+        printf "%s\\t%s\\t%s\\t%s\\t%s\\t%s\\n" "$uuid" "$owner" "$elapsed" "$memory" "$is_mine" "$command"
+    done
+    true
+    """
 
     static func collect(_ config: ServerConfig) async -> CollectionResult {
         await withCheckedContinuation { continuation in
@@ -78,13 +98,34 @@ enum SSHCollector {
             .split(whereSeparator: \.isNewline)
             .map { $0.trimmingCharacters(in: .whitespaces) }
         let statsLines: ArraySlice<String>
-        let ownedUUIDs: Set<String>
-        if let markerIndex = lines.firstIndex(of: ownedMarker) {
+        let processLines: ArraySlice<String>
+        if let markerIndex = lines.firstIndex(of: processMarker) {
             statsLines = lines[..<markerIndex]
-            ownedUUIDs = Set(lines[lines.index(after: markerIndex)...])
+            processLines = lines[lines.index(after: markerIndex)...]
         } else {
             statsLines = lines[...]
-            ownedUUIDs = []
+            processLines = []
+        }
+
+        var processesByGPU: [String: [GPUProcessStat]] = [:]
+        for (offset, rawLine) in processLines.enumerated() {
+            let values = rawLine.split(
+                separator: "\t",
+                maxSplits: 5,
+                omittingEmptySubsequences: false
+            )
+            guard values.count == 6 else { continue }
+            let gpuUUID = String(values[0])
+            let memoryUsed = Double(values[3]) ?? 0
+            let process = GPUProcessStat(
+                id: "\(gpuUUID):\(offset)",
+                username: String(values[1]),
+                processName: String(values[5]),
+                elapsedTime: values[2].isEmpty ? "—" : String(values[2]),
+                memoryUsedMiB: memoryUsed,
+                isCurrentUser: values[4] == "1"
+            )
+            processesByGPU[gpuUUID, default: []].append(process)
         }
 
         return statsLines
@@ -107,7 +148,7 @@ enum SSHCollector {
                     memoryUsedMiB: memoryUsed,
                     memoryTotalMiB: memoryTotal,
                     utilization: utilization,
-                    isOwnedByCurrentUser: ownedUUIDs.contains(uuid)
+                    processes: processesByGPU[uuid, default: []]
                 )
             }
             .sorted { $0.index < $1.index }

@@ -243,6 +243,7 @@ private struct ServerCard: View {
 
 private struct GPURow: View {
     let gpu: GPUStat
+    @State private var isShowingDetails = false
 
     private let ownershipColor = Color(red: 0.37, green: 0.39, blue: 0.94)
 
@@ -287,6 +288,17 @@ private struct GPURow: View {
             }
             .frame(height: 7)
 
+            Button("Detail") {
+                isShowingDetails.toggle()
+            }
+            .buttonStyle(.plain)
+            .font(.system(size: 7.5, weight: .semibold))
+            .foregroundStyle(Color.black.opacity(gpu.processes.isEmpty ? 0.34 : 0.56))
+            .frame(width: 31, alignment: .trailing)
+            .help("Show processes using GPU #\(gpu.index)")
+            .popover(isPresented: $isShowingDetails, arrowEdge: .trailing) {
+                GPUDetailView(gpu: gpu)
+            }
         }
         .padding(.horizontal, 3)
         .frame(height: 15)
@@ -297,5 +309,119 @@ private struct GPURow: View {
         .help(gpu.isOwnedByCurrentUser ? "Your process is using this GPU" : "GPU #\(gpu.index)")
         .animation(.easeInOut(duration: 0.4), value: gpu.memoryFraction)
         .animation(.easeInOut(duration: 0.2), value: gpu.isOwnedByCurrentUser)
+    }
+}
+
+private struct GPUDetailView: View {
+    let gpu: GPUStat
+
+    private let panelColor = Color(red: 0.075, green: 0.082, blue: 0.105)
+    private let secondaryText = Color.white.opacity(0.55)
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 7) {
+                Image(systemName: "cpu")
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(Color(red: 0.48, green: 0.58, blue: 1.0))
+                Text("GPU #\(gpu.index)")
+                    .font(.system(size: 12, weight: .bold, design: .monospaced))
+                Text(gpu.name)
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundStyle(secondaryText)
+                    .lineLimit(1)
+                Spacer()
+                Text("\(gpu.processes.count) \(gpu.processes.count == 1 ? "PROCESS" : "PROCESSES")")
+                    .font(.system(size: 8, weight: .semibold, design: .monospaced))
+                    .foregroundStyle(secondaryText)
+            }
+
+            if gpu.processes.isEmpty {
+                HStack(spacing: 7) {
+                    Circle()
+                        .fill(Color(red: 0.30, green: 0.78, blue: 0.48))
+                        .frame(width: 6, height: 6)
+                    Text("No active compute processes")
+                        .font(.system(size: 10, weight: .medium, design: .monospaced))
+                        .foregroundStyle(secondaryText)
+                }
+                .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+            } else {
+                processHeader
+                Rectangle()
+                    .fill(Color.white.opacity(0.10))
+                    .frame(height: 1)
+
+                ScrollView(.vertical, showsIndicators: gpu.processes.count > 5) {
+                    LazyVStack(spacing: 0) {
+                        ForEach(gpu.processes) { process in
+                            ProcessDetailRow(process: process)
+                        }
+                    }
+                }
+                .frame(maxHeight: 176)
+            }
+        }
+        .padding(13)
+        .frame(width: 410)
+        .foregroundStyle(Color.white.opacity(0.92))
+        .background(panelColor)
+    }
+
+    private var processHeader: some View {
+        HStack(spacing: 8) {
+            Text("USER")
+                .frame(width: 72, alignment: .leading)
+            Text("PROCESS")
+                .frame(maxWidth: .infinity, alignment: .leading)
+            Text("TIME")
+                .frame(width: 58, alignment: .trailing)
+            Text("MEM")
+                .frame(width: 44, alignment: .trailing)
+        }
+        .font(.system(size: 8, weight: .bold, design: .monospaced))
+        .foregroundStyle(secondaryText)
+    }
+}
+
+private struct ProcessDetailRow: View {
+    let process: GPUProcessStat
+
+    var body: some View {
+        HStack(spacing: 8) {
+            HStack(spacing: 5) {
+                RoundedRectangle(cornerRadius: 1, style: .continuous)
+                    .fill(
+                        process.isCurrentUser
+                            ? Color(red: 0.48, green: 0.58, blue: 1.0)
+                            : Color.clear
+                    )
+                    .frame(width: 2, height: 11)
+                Text(process.username)
+                    .lineLimit(1)
+            }
+            .frame(width: 72, alignment: .leading)
+
+            Text(process.processName)
+                .lineLimit(1)
+                .truncationMode(.middle)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .help(process.processName)
+
+            Text(process.elapsedTime)
+                .frame(width: 58, alignment: .trailing)
+
+            Text(process.memoryLabel)
+                .foregroundStyle(Color(red: 0.42, green: 0.80, blue: 0.58))
+                .frame(width: 44, alignment: .trailing)
+        }
+        .font(.system(size: 9, weight: .medium, design: .monospaced))
+        .foregroundStyle(Color.white.opacity(0.80))
+        .padding(.vertical, 6)
+        .overlay(alignment: .bottom) {
+            Rectangle()
+                .fill(Color.white.opacity(0.055))
+                .frame(height: 1)
+        }
     }
 }

@@ -17,6 +17,10 @@ configured SSH aliases.
 - Click the menu-bar item to show or hide the monitor.
 - Use the refresh button beside the UTIL legend to fetch the latest GPU data immediately.
 - GPUs used by the current SSH login user are marked with a slim indigo rail, bold GPU label, and a faint indigo row background; the compact legend reads `MINE`.
+- Each GPU row has a compact **Detail** action. Its nvitop-style panel shows
+  the current username, process name, elapsed time, and GPU memory without
+  exposing PID. Process details are collected in the existing refresh query,
+  so opening the panel does not create another SSH connection.
 - GPU data refreshes every 10 seconds only while the popover is open. Closing it pauses polling; reopening refreshes immediately.
 - Right-click the menu-bar icon to quit, toggle Launch at Login, or choose a 5/10/30/60-second refresh interval.
 - The **Servers…** settings window lists explicit `Host` entries from

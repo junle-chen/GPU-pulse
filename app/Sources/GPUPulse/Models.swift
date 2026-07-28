@@ -48,6 +48,22 @@ struct ServerConfig: Identifiable, Hashable {
     }
 }
 
+struct GPUProcessStat: Identifiable, Hashable {
+    let id: String
+    let username: String
+    let processName: String
+    let elapsedTime: String
+    let memoryUsedMiB: Double
+    let isCurrentUser: Bool
+
+    var memoryLabel: String {
+        if memoryUsedMiB >= 1024 {
+            return String(format: "%.1fG", memoryUsedMiB / 1024)
+        }
+        return "\(Int(memoryUsedMiB.rounded()))M"
+    }
+}
+
 struct GPUStat: Identifiable, Hashable {
     let index: Int
     let uuid: String
@@ -55,7 +71,7 @@ struct GPUStat: Identifiable, Hashable {
     let memoryUsedMiB: Double
     let memoryTotalMiB: Double
     let utilization: Double
-    let isOwnedByCurrentUser: Bool
+    let processes: [GPUProcessStat]
 
     var id: Int { index }
     var memoryFraction: Double {
@@ -66,6 +82,7 @@ struct GPUStat: Identifiable, Hashable {
     var memoryUsedGiB: Double { memoryUsedMiB / 1024 }
     var memoryTotalGiB: Double { memoryTotalMiB / 1024 }
     var isBusy: Bool { utilization >= 10 || memoryFraction >= 0.1 }
+    var isOwnedByCurrentUser: Bool { processes.contains(where: \.isCurrentUser) }
 }
 
 enum ServerHealth: Equatable {

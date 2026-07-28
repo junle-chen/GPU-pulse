@@ -29,6 +29,8 @@ servers to monitor. Dashboard labels use the part before the first dot, so
 - Each row represents one GPU. Bar length is memory usage; green, yellow, and
   red represent GPU utilization.
 - `MINE` highlights GPUs running processes owned by your SSH login user.
+- **Detail** opens a compact nvitop-style process panel for that GPU with the
+  username, process name, elapsed time, and GPU memory. PID is not displayed.
 - Left-click the menu-bar icon to open the monitor.
 - Right-click it to change the refresh interval, toggle Launch at Login, or
   quit GPU Pulse.
@@ -56,6 +58,8 @@ Remote hosts must provide `nvidia-smi` and key-based SSH access.
 
 - **Open/close:** left-click the menu-bar chart icon.
 - **Refresh now:** click the circular arrow in the upper-right corner.
+- **GPU process details:** click **Detail** beside a GPU row. Opening it uses
+  the latest refresh snapshot and does not create an additional SSH connection.
 - **Servers:** right-click the menu-bar icon, choose **Servers…**, then select
   any number of hosts. The selection is stored only on this Mac.
 - **Refresh frequency:** choose 5, 10, 30, or 60 seconds. The default is 10
