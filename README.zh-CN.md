@@ -30,7 +30,7 @@ GPU Pulse 是一款简洁的原生 macOS 菜单栏应用，用于查看多台服
 
 ## 安装
 
-1. 从 [最新 Release](https://github.com/junle-chen/monitor/releases/latest)
+1. 从 [最新 Release](https://github.com/junle-chen/GPU-pulse/releases/latest)
    下载 `GPU-Pulse-macOS.zip`。
 2. 解压并把 `GPU Pulse.app` 移动到 `/Applications`。
 3. 如果 macOS 首次启动时拦截本地签名版本，请按住 Control 点击应用并选择

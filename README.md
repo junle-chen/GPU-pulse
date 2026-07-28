@@ -34,7 +34,7 @@ with `zxcpu1` through `zxcpu4`, and displays them as `ZXCPU1–4`.
 ## Install
 
 1. Download `GPU-Pulse-macOS.zip` from the
-   [latest release](https://github.com/junle-chen/monitor/releases/latest).
+   [latest release](https://github.com/junle-chen/GPU-pulse/releases/latest).
 2. Unzip it and move `GPU Pulse.app` into `/Applications`.
 3. Control-click the app and choose **Open** on the first launch if macOS asks
    you to confirm the locally signed build.
