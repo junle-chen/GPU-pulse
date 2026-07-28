@@ -1,5 +1,7 @@
 # GPU Pulse
 
+[English](README.md) | [简体中文](README.zh-CN.md)
+
 <p align="center">
   <img src="assets/gpu-pulse-icon.png" width="112" alt="GPU Pulse icon">
 </p>
@@ -9,7 +11,26 @@ utilization across multiple servers. It talks directly to the servers over your
 existing SSH configuration—there is no hosted backend and no monitoring data is
 uploaded elsewhere.
 
-## Demo
+## Visuals
+
+### App Icon
+
+<p align="center">
+  <img src="assets/gpu-pulse-icon.png" width="220" alt="GPU Pulse app icon">
+</p>
+
+The stacked horizontal bars represent a bank of GPUs. Their green-to-red
+palette matches the dashboard’s utilization colors, while the dark rounded
+background keeps the icon readable in the Dock, Finder, and macOS app grid.
+
+### Dashboard
+
+![GPU Pulse dashboard showing four generic servers](assets/gpu-pulse-dashboard.png)
+
+The screenshot uses generic `SERVER 1–4` labels. Real SSH aliases stay in the
+local `servers.json` file and are never embedded in repository images.
+
+## What It Shows
 
 - Four servers are shown in a compact 2×2 grid.
 - Each row represents one GPU. Bar length is memory usage; green, yellow, and
@@ -79,7 +100,7 @@ aliases.
 | --- | --- |
 | [`app/`](app/) | Current native SwiftUI macOS application |
 | [`web/`](web/) | Previous Streamlit web version |
-| [`assets/`](assets/) | README screenshots and icon |
+| [`assets/`](assets/) | App icon and privacy-safe README screenshots |
 
 ## Previous Web Version
 
