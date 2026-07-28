@@ -61,6 +61,18 @@ Remote hosts must provide `nvidia-smi` and key-based SSH access.
   approve it in **System Settings → General → Login Items**.
 - **Quit:** choose **Quit GPU Pulse** from the right-click menu.
 
+## Right-click Menu
+
+![GPU Pulse menu-bar context menu](assets/gpu-pulse-context-menu.png)
+
+Right-click the GPU Pulse menu-bar icon to access its controls without opening
+the dashboard:
+
+- **Servers…** opens the SSH Host selection window.
+- **Launch at Login** starts GPU Pulse automatically after you sign in to macOS.
+- **Refresh Interval** selects a 5, 10, 30, or 60-second polling interval.
+- **Quit GPU Pulse** stops monitoring and closes the application.
+
 SSH connections are multiplexed for up to 60 seconds to avoid repeating jump
 host and authentication handshakes. A reconnect may still occur after that
 idle window expires.

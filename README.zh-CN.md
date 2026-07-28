@@ -54,6 +54,17 @@ GPU Pulse 会读取本机现有 `~/.ssh/config` 中明确配置的 SSH 别名，
   **系统设置 → 通用 → 登录项** 中批准。
 - **退出：** 在右键菜单中选择 **Quit GPU Pulse**。
 
+## 右键菜单
+
+![GPU Pulse 菜单栏右键菜单](assets/gpu-pulse-context-menu.png)
+
+右键点击菜单栏中的 GPU Pulse 图标，无需打开监控面板即可使用以下控制：
+
+- **Servers…：** 打开 SSH Host 选择窗口。
+- **Launch at Login：** 登录 macOS 后自动启动 GPU Pulse。
+- **Refresh Interval：** 选择 5、10、30 或 60 秒的监控刷新间隔。
+- **Quit GPU Pulse：** 停止监控并退出应用。
+
 SSH 连接最多复用 60 秒，避免反复执行跳板机和认证握手。空闲超过该时间后，
 再次打开面板仍可能重新建立连接。
 
