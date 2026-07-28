@@ -10,19 +10,7 @@ GPU Pulse 是一款简洁的原生 macOS 菜单栏应用，用于查看多台服
 显存占用和利用率。应用直接使用你已有的 SSH 配置连接服务器，不依赖托管后端，
 也不会把监控数据上传到其他服务。
 
-## 图片展示
-
-### 应用图标
-
-<p align="center">
-  <img src="assets/gpu-pulse-icon.png" width="220" alt="GPU Pulse 应用图标">
-</p>
-
-图标中的多条横向进度条代表一组 GPU。颜色从绿色过渡到红色，与面板中的
-GPU 利用率颜色保持一致；深色圆角背景可以保证图标在 Dock、Finder 和 macOS
-应用列表中清晰可见。
-
-### 监控面板
+## 监控面板
 
 ![显示四台通用服务器的 GPU Pulse 面板](assets/gpu-pulse-dashboard.png)
 

@@ -11,19 +11,7 @@ utilization across multiple servers. It talks directly to the servers over your
 existing SSH configuration—there is no hosted backend and no monitoring data is
 uploaded elsewhere.
 
-## Visuals
-
-### App Icon
-
-<p align="center">
-  <img src="assets/gpu-pulse-icon.png" width="220" alt="GPU Pulse app icon">
-</p>
-
-The stacked horizontal bars represent a bank of GPUs. Their green-to-red
-palette matches the dashboard’s utilization colors, while the dark rounded
-background keeps the icon readable in the Dock, Finder, and macOS app grid.
-
-### Dashboard
+## Dashboard
 
 ![GPU Pulse dashboard showing four generic servers](assets/gpu-pulse-dashboard.png)
 
