@@ -190,12 +190,33 @@ private struct ServerCard: View {
                 Text(server.config.displayName.uppercased())
                     .font(.system(size: 13, weight: .semibold))
                 Spacer()
-                Button("Detail") {
+                Button {
                     isShowingDetails.toggle()
+                } label: {
+                    HStack(spacing: 3) {
+                        Image(systemName: "list.bullet.rectangle")
+                            .font(.system(size: 8, weight: .semibold))
+                        Text("DETAIL")
+                            .font(.system(size: 7.5, weight: .bold))
+                            .tracking(0.35)
+                    }
+                    .foregroundStyle(Color(red: 0.31, green: 0.34, blue: 0.78))
+                    .padding(.horizontal, 6)
+                    .frame(height: 18)
+                    .background(
+                        Capsule()
+                            .fill(Color(red: 0.37, green: 0.39, blue: 0.94).opacity(0.09))
+                    )
+                    .overlay(
+                        Capsule()
+                            .stroke(
+                                Color(red: 0.37, green: 0.39, blue: 0.94).opacity(0.20),
+                                lineWidth: 0.7
+                            )
+                    )
                 }
                 .buttonStyle(.plain)
-                .font(.system(size: 8, weight: .semibold))
-                .foregroundStyle(Color.black.opacity(server.gpus.isEmpty ? 0.24 : 0.45))
+                .opacity(server.gpus.isEmpty ? 0.36 : 1)
                 .disabled(server.gpus.isEmpty)
                 .help("Show processes on \(server.config.displayName)")
                 .popover(isPresented: $isShowingDetails, arrowEdge: .trailing) {
@@ -350,56 +371,93 @@ private struct ServerDetailView: View {
                 .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
             } else {
                 processHeader
-                Rectangle()
-                    .fill(Color.white.opacity(0.10))
-                    .frame(height: 1)
 
                 ScrollView(.vertical, showsIndicators: processCount > 7) {
-                    LazyVStack(spacing: 0) {
+                    LazyVStack(spacing: 7) {
                         ForEach(server.gpus) { gpu in
-                            ForEach(gpu.processes) { process in
-                                ProcessDetailRow(gpuIndex: gpu.index, process: process)
+                            if !gpu.processes.isEmpty {
+                                GPUProcessGroup(gpu: gpu)
                             }
                         }
                     }
+                    .padding(.trailing, 10)
                 }
-                .frame(maxHeight: 224)
+                .frame(maxHeight: 244)
             }
         }
         .padding(13)
-        .frame(width: 450)
+        .frame(width: 480)
         .foregroundStyle(Color.white.opacity(0.92))
         .background(panelColor)
     }
 
     private var processHeader: some View {
         HStack(spacing: 8) {
-            Text("GPU")
-                .frame(width: 30, alignment: .leading)
             Text("USER")
-                .frame(width: 68, alignment: .leading)
+                .frame(width: 76, alignment: .leading)
             Text("PROCESS")
                 .frame(maxWidth: .infinity, alignment: .leading)
             Text("TIME")
-                .frame(width: 58, alignment: .trailing)
+                .frame(width: 82, alignment: .trailing)
             Text("MEM")
-                .frame(width: 44, alignment: .trailing)
+                .frame(width: 52, alignment: .trailing)
         }
         .font(.system(size: 8, weight: .bold, design: .monospaced))
         .foregroundStyle(secondaryText)
+        .padding(.horizontal, 9)
+        .padding(.trailing, 10)
+    }
+}
+
+private struct GPUProcessGroup: View {
+    let gpu: GPUStat
+
+    private var accentColor: Color {
+        let colors = [
+            Color(red: 0.40, green: 0.55, blue: 1.00),
+            Color(red: 0.42, green: 0.75, blue: 0.98),
+            Color(red: 0.55, green: 0.48, blue: 0.96),
+            Color(red: 0.35, green: 0.72, blue: 0.70)
+        ]
+        return colors[gpu.index % colors.count]
+    }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 6) {
+                RoundedRectangle(cornerRadius: 1, style: .continuous)
+                    .fill(accentColor)
+                    .frame(width: 2, height: 11)
+                Text("GPU #\(gpu.index)")
+                    .font(.system(size: 9, weight: .bold, design: .monospaced))
+                    .foregroundStyle(accentColor)
+                Spacer()
+                Text("\(gpu.processes.count) \(gpu.processes.count == 1 ? "PROCESS" : "PROCESSES")")
+                    .font(.system(size: 7.5, weight: .semibold, design: .monospaced))
+                    .foregroundStyle(Color.white.opacity(0.42))
+            }
+            .padding(.horizontal, 9)
+            .frame(height: 23)
+            .background(accentColor.opacity(0.10))
+
+            ForEach(gpu.processes) { process in
+                ProcessDetailRow(process: process)
+            }
+        }
+        .background(Color.white.opacity(0.018))
+        .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                .stroke(accentColor.opacity(0.15), lineWidth: 0.7)
+        )
     }
 }
 
 private struct ProcessDetailRow: View {
-    let gpuIndex: Int
     let process: GPUProcessStat
 
     var body: some View {
         HStack(spacing: 8) {
-            Text("#\(gpuIndex)")
-                .foregroundStyle(Color(red: 0.48, green: 0.58, blue: 1.0))
-                .frame(width: 30, alignment: .leading)
-
             HStack(spacing: 5) {
                 RoundedRectangle(cornerRadius: 1, style: .continuous)
                     .fill(
@@ -411,7 +469,7 @@ private struct ProcessDetailRow: View {
                 Text(process.username)
                     .lineLimit(1)
             }
-            .frame(width: 68, alignment: .leading)
+            .frame(width: 76, alignment: .leading)
 
             Text(process.processName)
                 .lineLimit(1)
@@ -420,14 +478,19 @@ private struct ProcessDetailRow: View {
                 .help(process.processName)
 
             Text(process.elapsedTime)
-                .frame(width: 58, alignment: .trailing)
+                .monospacedDigit()
+                .lineLimit(1)
+                .frame(width: 82, alignment: .trailing)
 
             Text(process.memoryLabel)
                 .foregroundStyle(Color(red: 0.42, green: 0.80, blue: 0.58))
-                .frame(width: 44, alignment: .trailing)
+                .monospacedDigit()
+                .lineLimit(1)
+                .frame(width: 52, alignment: .trailing)
         }
         .font(.system(size: 9, weight: .medium, design: .monospaced))
         .foregroundStyle(Color.white.opacity(0.80))
+        .padding(.horizontal, 9)
         .padding(.vertical, 6)
         .overlay(alignment: .bottom) {
             Rectangle()

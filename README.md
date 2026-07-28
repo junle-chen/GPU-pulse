@@ -32,6 +32,8 @@ servers to monitor. Dashboard labels use the part before the first dot, so
 - Each server card has one **Detail** action. It opens a compact nvitop-style
   table covering all GPUs on that server, with GPU index, username, process
   name, elapsed time, and GPU memory. PID is not displayed.
+- Multiple processes on the same GPU are grouped together, with aligned
+  fixed-width `TIME` and `MEM` columns.
 - Left-click the menu-bar icon to open the monitor.
 - Right-click it to change the refresh interval, toggle Launch at Login, or
   quit GPU Pulse.
