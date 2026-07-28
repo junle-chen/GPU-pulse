@@ -4,7 +4,6 @@ import Combine
 @MainActor
 final class MonitorStore: ObservableObject {
     static let supportedRefreshIntervals: [TimeInterval] = [5, 10, 30, 60]
-    static let maximumSelectedHosts = 4
     private static let refreshIntervalKey = "refreshInterval"
     private static let selectedHostsKey = "selectedSSHHosts"
 
@@ -56,7 +55,6 @@ final class MonitorStore: ObservableObject {
 
     func setSelected(_ selected: Bool, for host: ServerConfig) {
         if selected {
-            guard selectedHostIDs.count < Self.maximumSelectedHosts else { return }
             selectedHostIDs.insert(host.id)
         } else {
             selectedHostIDs.remove(host.id)

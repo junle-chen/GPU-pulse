@@ -5,11 +5,11 @@ configured SSH aliases.
 
 ## Behavior
 
-- Refreshes all four hosts concurrently at a selectable 5/10/30/60-second
+- Refreshes all selected hosts concurrently at a selectable 5/10/30/60-second
   interval (10 seconds by default) while the popover is open.
 - Reuses one multiplexed SSH connection per host (`ControlPersist=60`) instead of performing a full handshake every 10 seconds.
 - Reads only `nvidia-smi` over the SSH aliases already configured on the Mac.
-- Shows four glass server cards in a 2×2 layout, each listing GPU #0 through GPU #7.
+- Shows glass server cards in a two-column scrolling layout, each listing GPU #0 through GPU #7.
 - Each GPU uses one horizontal bar: length represents VRAM usage and color represents utilization.
 - Bar color represents utilization: green below 50%, yellow from 50–79%, and red at 80% or above. No usage numbers are printed; each card labels the bar column as `MEM`.
 - A single compact `UTIL` green-to-yellow-to-red gradient legend appears above the card grid.
@@ -20,7 +20,7 @@ configured SSH aliases.
 - GPU data refreshes every 10 seconds only while the popover is open. Closing it pauses polling; reopening refreshes immediately.
 - Right-click the menu-bar icon to quit, toggle Launch at Login, or choose a 5/10/30/60-second refresh interval.
 - The **Servers…** settings window lists explicit `Host` entries from
-  `~/.ssh/config` and allows up to four selections. Only selected hosts are
+  `~/.ssh/config` and allows any number of selections. Only selected hosts are
   contacted.
 - Dashboard labels use the text before the first dot in each SSH alias; the
   actual SSH command continues to use the complete alias.

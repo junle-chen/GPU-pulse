@@ -21,10 +21,14 @@ struct DashboardView: View {
             if store.servers.isEmpty {
                 NoServersView()
             } else {
-                LazyVGrid(columns: columns, spacing: 12) {
-                    ForEach(store.servers) { server in
-                        ServerCard(server: server)
+                ScrollView(.vertical) {
+                    LazyVGrid(columns: columns, spacing: 12) {
+                        ForEach(store.servers) { server in
+                            ServerCard(server: server)
+                        }
                     }
+                    .padding(.horizontal, 1)
+                    .padding(.bottom, 8)
                 }
             }
         }

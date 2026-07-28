@@ -16,13 +16,15 @@ uploaded elsewhere.
 ![GPU Pulse dashboard showing four generic servers](assets/gpu-pulse-dashboard.png)
 
 The screenshot uses generic `SERVER 1–4` labels for privacy. At runtime, the app
-lists the explicit `Host` entries from `~/.ssh/config` and lets you choose up
-to four servers. Dashboard labels use the part before the first dot, so
+lists the explicit `Host` entries from `~/.ssh/config` and lets you choose the
+servers to monitor. Dashboard labels use the part before the first dot, so
 `zxcpu1.cse.example.edu` appears as `ZXCPU1`.
 
 ## What It Shows
 
 - Four servers are shown in a compact 2×2 grid.
+- Additional servers continue in the same two-column grid with vertical
+  scrolling.
 - Each row represents one GPU. Bar length is memory usage; green, yellow, and
   red represent GPU utilization.
 - `MINE` highlights GPUs running processes owned by your SSH login user.
@@ -40,8 +42,8 @@ to four servers. Dashboard labels use the part before the first dot, so
 2. Unzip it and move `GPU Pulse.app` into `/Applications`.
 3. Control-click the app and choose **Open** on the first launch if macOS asks
    you to confirm the locally signed build.
-4. Right-click the menu-bar icon, choose **Servers…**, and select up to four
-   SSH hosts to monitor.
+4. Right-click the menu-bar icon, choose **Servers…**, and select the SSH hosts
+   to monitor.
 
 GPU Pulse reads explicit SSH aliases from your existing `~/.ssh/config`; no
 separate app configuration file is needed. It requires macOS 13 or newer.
@@ -52,7 +54,7 @@ Remote hosts must provide `nvidia-smi` and key-based SSH access.
 - **Open/close:** left-click the menu-bar chart icon.
 - **Refresh now:** click the circular arrow in the upper-right corner.
 - **Servers:** right-click the menu-bar icon, choose **Servers…**, then select
-  up to four hosts. The selection is stored only on this Mac.
+  any number of hosts. The selection is stored only on this Mac.
 - **Refresh frequency:** choose 5, 10, 30, or 60 seconds. The default is 10
   seconds.
 - **Launch at login:** enable it from the right-click menu. macOS may ask you to

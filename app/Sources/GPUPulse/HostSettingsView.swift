@@ -8,7 +8,7 @@ struct HostSettingsView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Servers")
                     .font(.system(size: 20, weight: .semibold))
-                Text("Select up to \(MonitorStore.maximumSelectedHosts) SSH hosts to monitor.")
+                Text("Select the SSH hosts you want to monitor.")
                     .font(.system(size: 12))
                     .foregroundStyle(.secondary)
             }
@@ -70,10 +70,6 @@ struct HostSettingsView: View {
     }
 
     private func hostRow(_ host: ServerConfig) -> some View {
-        let selected = store.isSelected(host)
-        let selectionLimitReached =
-            store.selectedHostIDs.count >= MonitorStore.maximumSelectedHosts
-
         return Toggle(
             isOn: Binding(
                 get: { store.isSelected(host) },
@@ -90,7 +86,6 @@ struct HostSettingsView: View {
             }
         }
         .toggleStyle(.checkbox)
-        .disabled(!selected && selectionLimitReached)
         .padding(.horizontal, 8)
         .padding(.vertical, 6)
         .contentShape(Rectangle())
