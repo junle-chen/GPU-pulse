@@ -1,0 +1,29 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="base" x1="120" y1="80" x2="900" y2="940" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#111A3C"/>
+      <stop offset="0.52" stop-color="#15102F"/>
+      <stop offset="1" stop-color="#080B18"/>
+    </linearGradient>
+    <linearGradient id="pulse" x1="225" y1="640" x2="825" y2="350" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3EEAFF"/>
+      <stop offset="0.52" stop-color="#8D72FF"/>
+      <stop offset="1" stop-color="#FF4FA7"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientTransform="translate(740 280) rotate(132) scale(690)">
+      <stop stop-color="#6B5CFF" stop-opacity=".35"/>
+      <stop offset="1" stop-color="#6B5CFF" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+  </defs>
+  <rect x="62" y="62" width="900" height="900" rx="216" fill="url(#base)"/>
+  <rect x="62" y="62" width="900" height="900" rx="216" fill="url(#glow)"/>
+  <rect x="102" y="102" width="820" height="820" rx="178" fill="none" stroke="white" stroke-opacity=".09" stroke-width="3"/>
+  <path d="M210 530H322L381 392L464 665L544 474L607 565L672 355L730 530H814" fill="none" stroke="#5FE9FF" stroke-opacity=".28" stroke-width="42" stroke-linecap="round" stroke-linejoin="round" filter="url(#shadow)"/>
+  <path d="M210 530H322L381 392L464 665L544 474L607 565L672 355L730 530H814" fill="none" stroke="url(#pulse)" stroke-width="29" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="210" cy="530" r="15" fill="#3EEAFF"/>
+  <circle cx="814" cy="530" r="15" fill="#FF4FA7"/>
+  <text x="512" y="790" fill="white" fill-opacity=".85" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="80" font-weight="700" text-anchor="middle" letter-spacing="18">ZX</text>
+</svg>

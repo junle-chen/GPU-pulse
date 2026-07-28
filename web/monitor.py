@@ -24,6 +24,9 @@ def load_hosts():
 
 HOSTS = load_hosts()
 SSH_USER = None
+SSH_CONNECT_TIMEOUT = 5  # seconds for establishing SSH
+SSH_REMOTE_TIMEOUT = 12  # seconds for remote nvidia-smi/ps commands
+SSH_CMD_TIMEOUT = SSH_CONNECT_TIMEOUT + SSH_REMOTE_TIMEOUT + 5  # local cap
 # ===========================================
 
 st.set_page_config(
@@ -98,21 +101,22 @@ components.html(
 def get_gpu_status(host):
     target = f"{SSH_USER}@{host}" if SSH_USER else host
 
-    bash_script = """
+    bash_script = f"""
     export PATH=$PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+    REMOTE_TIMEOUT={SSH_REMOTE_TIMEOUT}
     
     # [1] GPU Info
-    nvidia-smi --query-gpu=index,uuid,name,memory.used,memory.total,utilization.gpu,temperature.gpu --format=csv,noheader,nounits
+    timeout ${{REMOTE_TIMEOUT}}s nvidia-smi --query-gpu=index,uuid,name,memory.used,memory.total,utilization.gpu,temperature.gpu --format=csv,noheader,nounits
     echo "|||SPLIT|||"
     
     # [2] Process Info
-    nvidia-smi --query-compute-apps=gpu_uuid,pid,used_memory,process_name --format=csv,noheader,nounits
+    timeout ${{REMOTE_TIMEOUT}}s nvidia-smi --query-compute-apps=gpu_uuid,pid,used_memory,process_name --format=csv,noheader,nounits
     echo "|||SPLIT|||"
     
     # [3] User Info
-    pids=$(nvidia-smi --query-compute-apps=pid --format=csv,noheader | paste -sd, -)
+    pids=$(timeout ${{REMOTE_TIMEOUT}}s nvidia-smi --query-compute-apps=pid --format=csv,noheader | paste -sd, -)
     if [ ! -z "$pids" ]; then
-        ps -o pid=,user= -p "$pids"
+        timeout ${{REMOTE_TIMEOUT}}s ps -o pid=,user= -p "$pids"
     fi
     """
 
@@ -120,7 +124,9 @@ def get_gpu_status(host):
         ssh = [
             "ssh",
             "-o",
-            "ConnectTimeout=5",
+            f"ConnectTimeout={SSH_CONNECT_TIMEOUT}",
+            "-o",
+            "ConnectionAttempts=1",
             "-o",
             "StrictHostKeyChecking=no",
             "-o",
@@ -128,7 +134,9 @@ def get_gpu_status(host):
             target,
             f"bash -c '{bash_script}'",
         ]
-        result = subprocess.run(ssh, capture_output=True, text=True, timeout=10)
+        result = subprocess.run(
+            ssh, capture_output=True, text=True, timeout=SSH_CMD_TIMEOUT
+        )
 
         if result.returncode != 0:
             return host, None, None, None, f"SSH Err: {result.stderr.strip()}"
@@ -141,6 +149,14 @@ def get_gpu_status(host):
         else:
             return host, parts[0].strip(), "", "", None
 
+    except subprocess.TimeoutExpired:
+        return (
+            host,
+            None,
+            None,
+            None,
+            f"Timeout after {SSH_CMD_TIMEOUT}s (host slow or unreachable)",
+        )
     except Exception as e:
         return host, None, None, None, str(e)
 
@@ -382,7 +398,7 @@ try:
                 st.markdown("\n".join(md_lines), unsafe_allow_html=True)
 
         time_placeholder.caption(f"Last updated: {time.strftime('%H:%M:%S')}")
-        time.sleep(60)
+        time.sleep(5)
 except Exception:
     pass
 
