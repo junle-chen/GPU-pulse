@@ -25,6 +25,8 @@ configured SSH aliases.
 - Processes from the same GPU share a compact tinted group; the GPU index is
   printed only on its first row. Fixed-width monospaced `TIME` and `MEM`
   columns remain aligned even when the panel scrolls.
+- Each process `MEM` value uses the same green/yellow/red utilization color as
+  its GPU bar.
 - The detail panel grows with its current content so a typical eight-GPU server
   is visible at once. Scrolling is used only when the process list would exceed
   a safe on-screen height.

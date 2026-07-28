@@ -421,6 +421,14 @@ private struct ServerDetailView: View {
 private struct GPUProcessGroup: View {
     let gpu: GPUStat
 
+    private var utilizationColor: Color {
+        switch gpu.utilizationFraction {
+        case 0.8...: return Color(red: 0.91, green: 0.22, blue: 0.20)
+        case 0.5...: return Color(red: 0.93, green: 0.63, blue: 0.05)
+        default: return Color(red: 0.15, green: 0.67, blue: 0.28)
+        }
+    }
+
     private var accentColor: Color {
         let colors = [
             Color(red: 0.40, green: 0.55, blue: 1.00),
@@ -438,6 +446,7 @@ private struct GPUProcessGroup: View {
                     gpuIndex: gpu.index,
                     showsGPUIndex: offset == 0,
                     accentColor: accentColor,
+                    memoryColor: utilizationColor,
                     process: process
                 )
             }
@@ -455,6 +464,7 @@ private struct ProcessDetailRow: View {
     let gpuIndex: Int
     let showsGPUIndex: Bool
     let accentColor: Color
+    let memoryColor: Color
     let process: GPUProcessStat
 
     var body: some View {
@@ -489,7 +499,7 @@ private struct ProcessDetailRow: View {
                 .frame(width: 82, alignment: .trailing)
 
             Text(process.memoryLabel)
-                .foregroundStyle(Color(red: 0.42, green: 0.80, blue: 0.58))
+                .foregroundStyle(memoryColor)
                 .monospacedDigit()
                 .lineLimit(1)
                 .frame(width: 52, alignment: .trailing)

@@ -34,6 +34,8 @@ servers to monitor. Dashboard labels use the part before the first dot, so
   name, elapsed time, and GPU memory. PID is not displayed.
 - Multiple processes on the same GPU share a compact tinted group, with the GPU
   index shown only once and fixed-width `TIME` and `MEM` columns.
+- Process `MEM` values use the same green/yellow/red utilization color as their
+  GPU bar.
 - The detail panel grows to show a typical eight-GPU server at once and scrolls
   only when the process list would exceed a safe screen height.
 - Left-click the menu-bar icon to open the monitor.
