@@ -6,6 +6,7 @@ final class MonitorStore: ObservableObject {
     static let supportedRefreshIntervals: [TimeInterval] = [5, 10, 30, 60]
     private static let refreshIntervalKey = "refreshInterval"
     private static let selectedHostsKey = "selectedSSHHosts"
+    private static let serverOnboardingCompletedKey = "serverOnboardingCompleted"
 
     @Published private(set) var availableHosts: [ServerConfig]
     @Published private(set) var selectedHostIDs: Set<String>
@@ -29,6 +30,9 @@ final class MonitorStore: ObservableObject {
         let discoveredIDs = Set(discoveredHosts.map(\.id))
         let savedHosts = Set(defaults.stringArray(forKey: Self.selectedHostsKey) ?? [])
         let selection = savedHosts.intersection(discoveredIDs)
+        if !savedHosts.isEmpty {
+            defaults.set(true, forKey: Self.serverOnboardingCompletedKey)
+        }
 
         availableHosts = discoveredHosts
         selectedHostIDs = selection
@@ -48,6 +52,10 @@ final class MonitorStore: ObservableObject {
     }
     var totalMemoryUsedGiB: Double { allGPUs.map(\.memoryUsedGiB).reduce(0, +) }
     var totalMemoryGiB: Double { allGPUs.map(\.memoryTotalGiB).reduce(0, +) }
+    var needsServerOnboarding: Bool {
+        !UserDefaults.standard.bool(forKey: Self.serverOnboardingCompletedKey)
+            && selectedHostIDs.isEmpty
+    }
 
     func isSelected(_ host: ServerConfig) -> Bool {
         selectedHostIDs.contains(host.id)
@@ -56,6 +64,7 @@ final class MonitorStore: ObservableObject {
     func setSelected(_ selected: Bool, for host: ServerConfig) {
         if selected {
             selectedHostIDs.insert(host.id)
+            UserDefaults.standard.set(true, forKey: Self.serverOnboardingCompletedKey)
         } else {
             selectedHostIDs.remove(host.id)
         }

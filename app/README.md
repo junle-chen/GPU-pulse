@@ -22,6 +22,9 @@ configured SSH aliases.
 - The **Servers…** settings window lists explicit `Host` entries from
   `~/.ssh/config` and allows any number of selections. Only selected hosts are
   contacted.
+- On first launch, the Servers window opens automatically. Completing one
+  selection dismisses future onboarding; intentionally clearing all selections
+  later does not reopen it on every launch.
 - Dashboard labels use the text before the first dot in each SSH alias; the
   actual SSH command continues to use the complete alias.
 

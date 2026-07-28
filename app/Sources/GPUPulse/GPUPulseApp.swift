@@ -36,6 +36,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
                 self?.showPopover(nil)
             }
+        } else if store.needsServerOnboarding {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { [weak self] in
+                self?.showServerSettings(nil)
+            }
         }
     }
 

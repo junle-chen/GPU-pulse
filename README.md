@@ -32,6 +32,8 @@ servers to monitor. Dashboard labels use the part before the first dot, so
 - Right-click it to change the refresh interval, toggle Launch at Login, or
   quit GPU Pulse.
 - Only SSH hosts selected in **Servers…** are contacted.
+- On first launch, the **Servers** window opens automatically before any SSH
+  host is contacted.
 - Polling runs only while the panel is open. Closing the panel pauses SSH
   queries.
 
@@ -42,8 +44,8 @@ servers to monitor. Dashboard labels use the part before the first dot, so
 2. Unzip it and move `GPU Pulse.app` into `/Applications`.
 3. Control-click the app and choose **Open** on the first launch if macOS asks
    you to confirm the locally signed build.
-4. Right-click the menu-bar icon, choose **Servers…**, and select the SSH hosts
-   to monitor.
+4. On first launch, select the SSH hosts to monitor in the **Servers** window.
+   You can reopen it later from the menu-bar icon’s right-click menu.
 
 GPU Pulse reads explicit SSH aliases from your existing `~/.ssh/config`; no
 separate app configuration file is needed. It requires macOS 13 or newer.
