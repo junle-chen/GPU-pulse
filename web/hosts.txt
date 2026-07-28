@@ -1,4 +1,1 @@
-gpu-server-1
-gpu-server-2
-gpu-server-3
-gpu-server-4
+# Legacy file. The Web monitor now uses zxcpu1 through zxcpu5 automatically.

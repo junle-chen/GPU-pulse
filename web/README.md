@@ -8,8 +8,14 @@
 - 可以看看哪个服务器的gpu空闲
 - 可以查看GPU核心谁在跑实验
 
-``hosts.txt``,然后每行是一个主机名字，可以添加或者删除主机，主机的名字可以通过在~/.ssh/config文件寻找（Host后面的内容即是）。
-**注意服务器为你配置了公钥登录，你可以通过本地ssh私钥登陆，即(ssh xxx)，不需要密码，直接进入server.**
+Web 页面默认监控 `zxcpu1` 到 `zxcpu5`，不需要维护 `hosts.txt`，也不需要在
+页面中选择服务器。程序会自动读取 `~/.ssh/config`，将这些短名称匹配到对应的
+完整 SSH `Host` 后建立连接。
+
+页面显示名称与原生 App 一致：使用第一个点号前的部分，例如
+`gpu01.example.edu` 显示为 `GPU01`，但 SSH 仍使用完整 Host。
+
+服务器需要支持基于密钥的免交互 SSH 登录和 `nvidia-smi`。
 
 ## 优化SSH服务器连接 for macos（windows暂时先不配置）
 
@@ -85,7 +91,7 @@ which streamlit
 5.在右侧的编辑框里，删除默认内容，粘贴以下代码（注意替换你的路径）：
 
 ```bash
-cd /Users/xxx/Code/monitor
+cd /Users/xxx/Code/monitor/web
 
 # 2. 运行 Streamlit
 # 【注意】请把下面的 /path/to/streamlit 换成 'which streamlit' 查到的真实路径！
@@ -123,7 +129,7 @@ cd /Users/xxx/Code/monitor
 ```
 @echo off
 :: 切换到你的代码目录 (/d 是为了确保能跨盘符切换，比如从 C 盘切到 D 盘)
-cd /d "D:\Path\To\Your\Code\monitor"
+cd /d "D:\Path\To\Your\Code\monitor\web"
 
 :: 运行 Streamlit (如果 where streamlit 有输出路径，直接写 streamlit 即可)
 streamlit run monitor.py
@@ -134,7 +140,7 @@ pause
 ```
 @echo off
 :: 切换到代码目录
-cd /d "C:\Users\xxx\Code\monitor"
+cd /d "C:\Users\xxx\Code\monitor\web"
 
 :: 激活 conda 环境 (将 'your_env_name' 换成你的环境名，如 base)
 call conda activate your_env_name
