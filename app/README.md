@@ -1,7 +1,7 @@
 # GPU Pulse
 
-A native macOS menu-bar monitor for GPU 0–7 on
-`gpu-server-1` through `gpu-server-4`.
+A native macOS menu-bar monitor for GPU servers reached through locally
+configured SSH aliases.
 
 ## Behavior
 
@@ -25,5 +25,9 @@ A native macOS menu-bar monitor for GPU 0–7 on
 ```zsh
 swift build -c release
 ```
+
+Copy `servers.example.json` to
+`~/Library/Application Support/GPU Pulse/servers.json`, replace the placeholder
+hosts locally, and restart the app. Never commit the real configuration.
 
 The packaged `.app` in the deliverables is ad-hoc signed for local use.

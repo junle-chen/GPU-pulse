@@ -5,13 +5,11 @@
 </p>
 
 GPU Pulse is a compact native macOS menu-bar app for checking GPU memory and
-utilization across the `gpu-server1`–`gpu-server4` servers. It talks directly to the
-servers over your existing SSH configuration—there is no hosted backend and no
-monitoring data is uploaded elsewhere.
+utilization across multiple servers. It talks directly to the servers over your
+existing SSH configuration—there is no hosted backend and no monitoring data is
+uploaded elsewhere.
 
 ## Demo
-
-![GPU Pulse dashboard](assets/gpu-pulse-dashboard.jpg)
 
 - Four servers are shown in a compact 2×2 grid.
 - Each row represents one GPU. Bar length is memory usage; green, yellow, and
@@ -30,17 +28,23 @@ monitoring data is uploaded elsewhere.
 2. Unzip it and move `GPU Pulse.app` into `/Applications`.
 3. Control-click the app and choose **Open** on the first launch if macOS asks
    you to confirm the locally signed build.
-4. Make sure these SSH hosts work without an interactive password prompt:
+4. Create the local server configuration:
+
+   ```zsh
+   mkdir -p "$HOME/Library/Application Support/GPU Pulse"
+   cp app/servers.example.json \
+     "$HOME/Library/Application Support/GPU Pulse/servers.json"
+   ```
+
+5. Edit `servers.json` locally with your own display names and SSH aliases, then
+   verify each alias works without an interactive password prompt:
 
    ```zsh
    ssh gpu-server-1 nvidia-smi
-   ssh gpu-server-2 nvidia-smi
-   ssh gpu-server-3 nvidia-smi
-   ssh gpu-server-4 nvidia-smi
    ```
 
-GPU Pulse requires macOS 13 or newer. The remote hosts must provide
-`nvidia-smi`, key-based SSH access, and GPU indices 0–7.
+Do not commit your real `servers.json`. GPU Pulse requires macOS 13 or newer.
+Remote hosts must provide `nvidia-smi` and key-based SSH access.
 
 ## Usage
 
@@ -64,9 +68,10 @@ cd app
 swift build -c release
 ```
 
-The current server list is defined in
-`app/Sources/GPUPulse/Models.swift`. Edit `ServerConfig.all` if your SSH host
-aliases differ.
+Runtime server settings are read from
+`~/Library/Application Support/GPU Pulse/servers.json`. The repository includes
+only [`app/servers.example.json`](app/servers.example.json) with placeholder
+aliases.
 
 ## Repository Layout
 

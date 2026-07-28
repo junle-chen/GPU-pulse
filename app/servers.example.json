@@ -1,0 +1,22 @@
+[
+  {
+    "id": "server-1",
+    "displayName": "SERVER 1",
+    "host": "gpu-server-1"
+  },
+  {
+    "id": "server-2",
+    "displayName": "SERVER 2",
+    "host": "gpu-server-2"
+  },
+  {
+    "id": "server-3",
+    "displayName": "SERVER 3",
+    "host": "gpu-server-3"
+  },
+  {
+    "id": "server-4",
+    "displayName": "SERVER 4",
+    "host": "gpu-server-4"
+  }
+]

@@ -7,9 +7,9 @@
     <key>CFBundleDisplayName</key>
     <string>GPU Pulse</string>
     <key>CFBundleExecutable</key>
-    <string>GPUPulse</string>
+	<string>GPUPulse</string>
     <key>CFBundleIdentifier</key>
-    <string>io.github.junle-chen.gpupulse</string>
+	<string>io.github.junle-chen.gpupulse</string>
     <key>CFBundleIconFile</key>
     <string>AppIcon.icns</string>
     <key>CFBundleInfoDictionaryVersion</key>

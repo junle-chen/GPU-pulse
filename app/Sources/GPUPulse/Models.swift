@@ -1,17 +1,38 @@
 import Foundation
 import SwiftUI
 
-struct ServerConfig: Identifiable, Hashable {
+struct ServerConfig: Identifiable, Hashable, Codable {
     let id: String
     let displayName: String
     let host: String
 
-    static let all: [ServerConfig] = (1...4).map { index in
+    static let all: [ServerConfig] = load()
+
+    static let configURL: URL = {
+        let applicationSupport = FileManager.default.urls(
+            for: .applicationSupportDirectory,
+            in: .userDomainMask
+        ).first!
+        return applicationSupport
+            .appendingPathComponent("GPU Pulse", isDirectory: true)
+            .appendingPathComponent("servers.json")
+    }()
+
+    private static let exampleServers: [ServerConfig] = (1...4).map { index in
         ServerConfig(
-            id: "gpu-server\(index)",
+            id: "server-\(index)",
             displayName: "SERVER \(index)",
-            host: "gpu-server\(index)"
+            host: "gpu-server-\(index)"
         )
+    }
+
+    private static func load() -> [ServerConfig] {
+        guard let data = try? Data(contentsOf: configURL),
+              let servers = try? JSONDecoder().decode([ServerConfig].self, from: data),
+              !servers.isEmpty else {
+            return exampleServers
+        }
+        return servers
     }
 }
 

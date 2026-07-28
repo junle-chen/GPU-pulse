@@ -2,4 +2,3 @@ gpu-server-1
 gpu-server-2
 gpu-server-3
 gpu-server-4
-gpu-server-5

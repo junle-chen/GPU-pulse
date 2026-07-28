@@ -46,7 +46,7 @@ with st.sidebar:
 
 # ==========================================
 
-st.title("⚡ GPU Cluster GPU Monitor")
+st.title("⚡ GPU Cluster Monitor")
 
 st.markdown(
     """
