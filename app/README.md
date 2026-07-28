@@ -19,6 +19,11 @@ configured SSH aliases.
 - GPUs used by the current SSH login user are marked with a slim indigo rail, bold GPU label, and a faint indigo row background; the compact legend reads `MINE`.
 - GPU data refreshes every 10 seconds only while the popover is open. Closing it pauses polling; reopening refreshes immediately.
 - Right-click the menu-bar icon to quit, toggle Launch at Login, or choose a 5/10/30/60-second refresh interval.
+- The **Servers…** settings window lists explicit `Host` entries from
+  `~/.ssh/config` and allows up to four selections. Only selected hosts are
+  contacted.
+- Dashboard labels use the text before the first dot in each SSH alias; the
+  actual SSH command continues to use the complete alias.
 
 ## Build
 
@@ -26,8 +31,7 @@ configured SSH aliases.
 swift build -c release
 ```
 
-The app reads `~/.ssh/config` and automatically selects the four exact `Host`
-names beginning with `zxcpu1` through `zxcpu4`. The UI displays only
-`ZXCPU1–4`; full host names are never embedded in the app.
+The app reads explicit `Host` entries from `~/.ssh/config`. Wildcard entries are
+ignored, and the selected aliases are stored locally in `UserDefaults`.
 
 The packaged `.app` in the deliverables is ad-hoc signed for local use.

@@ -15,9 +15,10 @@ uploaded elsewhere.
 
 ![GPU Pulse dashboard showing four generic servers](assets/gpu-pulse-dashboard.png)
 
-The screenshot uses generic `SERVER 1–4` labels for privacy. At runtime, the
-app reads `~/.ssh/config`, finds the four configured `Host` names beginning
-with `zxcpu1` through `zxcpu4`, and displays them as `ZXCPU1–4`.
+The screenshot uses generic `SERVER 1–4` labels for privacy. At runtime, the app
+lists the explicit `Host` entries from `~/.ssh/config` and lets you choose up
+to four servers. Dashboard labels use the part before the first dot, so
+`zxcpu1.cse.example.edu` appears as `ZXCPU1`.
 
 ## What It Shows
 
@@ -28,6 +29,7 @@ with `zxcpu1` through `zxcpu4`, and displays them as `ZXCPU1–4`.
 - Left-click the menu-bar icon to open the monitor.
 - Right-click it to change the refresh interval, toggle Launch at Login, or
   quit GPU Pulse.
+- Only SSH hosts selected in **Servers…** are contacted.
 - Polling runs only while the panel is open. Closing the panel pauses SSH
   queries.
 
@@ -38,17 +40,19 @@ with `zxcpu1` through `zxcpu4`, and displays them as `ZXCPU1–4`.
 2. Unzip it and move `GPU Pulse.app` into `/Applications`.
 3. Control-click the app and choose **Open** on the first launch if macOS asks
    you to confirm the locally signed build.
+4. Right-click the menu-bar icon, choose **Servers…**, and select up to four
+   SSH hosts to monitor.
 
-GPU Pulse automatically reads the matching `zxcpu1` through `zxcpu4` host names
-from your existing `~/.ssh/config`; no separate app configuration is needed. It
-requires macOS 13 or newer. Remote hosts must provide `nvidia-smi` and
-key-based SSH access.
+GPU Pulse reads explicit SSH aliases from your existing `~/.ssh/config`; no
+separate app configuration file is needed. It requires macOS 13 or newer.
+Remote hosts must provide `nvidia-smi` and key-based SSH access.
 
 ## Usage
 
 - **Open/close:** left-click the menu-bar chart icon.
 - **Refresh now:** click the circular arrow in the upper-right corner.
-- **Settings:** right-click the menu-bar icon.
+- **Servers:** right-click the menu-bar icon, choose **Servers…**, then select
+  up to four hosts. The selection is stored only on this Mac.
 - **Refresh frequency:** choose 5, 10, 30, or 60 seconds. The default is 10
   seconds.
 - **Launch at login:** enable it from the right-click menu. macOS may ask you to
@@ -66,8 +70,9 @@ cd app
 swift build -c release
 ```
 
-The monitored hosts are discovered from the `Host` entries in your local
-`~/.ssh/config`; full host names are not embedded in the app.
+The monitored hosts are selected from the explicit `Host` entries in your local
+`~/.ssh/config`; wildcard entries are ignored and full host names are not
+embedded in the app.
 
 ## Repository Layout
 

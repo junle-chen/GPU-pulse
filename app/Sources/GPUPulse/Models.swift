@@ -6,30 +6,31 @@ struct ServerConfig: Identifiable, Hashable {
     let displayName: String
     let host: String
 
-    static let all: [ServerConfig] = {
-        let configuredAliases = sshHostAliases()
-        return (1...4).map { index in
-            let shortName = "zxcpu\(index)"
-            let host = configuredAliases.first {
-                let candidate = $0.lowercased()
-                return candidate == shortName || candidate.hasPrefix("\(shortName).")
-            } ?? shortName
-            return ServerConfig(
-                id: shortName,
-                displayName: shortName,
-                host: host
-            )
-        }
-    }()
-
-    private static func sshHostAliases() -> [String] {
+    static func discover() -> [ServerConfig] {
         let configURL = FileManager.default.homeDirectoryForCurrentUser
             .appendingPathComponent(".ssh/config")
         guard let contents = try? String(contentsOf: configURL, encoding: .utf8) else {
             return []
         }
 
-        return contents
+        return configs(from: contents)
+    }
+
+    static func configs(from contents: String) -> [ServerConfig] {
+        var seen = Set<String>()
+        return parseAliases(from: contents).compactMap { alias in
+            let identity = alias.lowercased()
+            guard seen.insert(identity).inserted else { return nil }
+            let displayName = alias
+                .split(separator: ".", maxSplits: 1, omittingEmptySubsequences: true)
+                .first
+                .map(String.init) ?? alias
+            return ServerConfig(id: alias, displayName: displayName, host: alias)
+        }
+    }
+
+    static func parseAliases(from contents: String) -> [String] {
+        contents
             .split(whereSeparator: \.isNewline)
             .flatMap { rawLine -> [String] in
                 let line = rawLine

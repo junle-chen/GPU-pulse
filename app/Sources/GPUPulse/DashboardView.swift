@@ -18,15 +18,36 @@ struct DashboardView: View {
             }
             .padding(.horizontal, 4)
 
-            LazyVGrid(columns: columns, spacing: 12) {
-                ForEach(store.servers) { server in
-                    ServerCard(server: server)
+            if store.servers.isEmpty {
+                NoServersView()
+            } else {
+                LazyVGrid(columns: columns, spacing: 12) {
+                    ForEach(store.servers) { server in
+                        ServerCard(server: server)
+                    }
                 }
             }
         }
         .padding(10)
         .frame(width: 640, height: 454)
         .preferredColorScheme(.light)
+    }
+}
+
+private struct NoServersView: View {
+    var body: some View {
+        VStack(spacing: 8) {
+            Image(systemName: "server.rack")
+                .font(.system(size: 28, weight: .light))
+                .foregroundStyle(Color.black.opacity(0.32))
+            Text("No servers selected")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(Color.black.opacity(0.62))
+            Text("Right-click the menu-bar icon and choose Servers…")
+                .font(.system(size: 11))
+                .foregroundStyle(Color.black.opacity(0.40))
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 

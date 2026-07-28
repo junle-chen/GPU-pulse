@@ -19,6 +19,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     private let store = MonitorStore()
     private var statusItem: NSStatusItem?
     private var popover: NSPopover?
+    private var settingsWindow: NSWindow?
     private var cancellables = Set<AnyCancellable>()
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -27,7 +28,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
         configurePopover()
         observeStore()
 
-        if CommandLine.arguments.contains("--show") {
+        if CommandLine.arguments.contains("--settings") {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
+                self?.showServerSettings(nil)
+            }
+        } else if CommandLine.arguments.contains("--show") {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
                 self?.showPopover(nil)
             }
@@ -104,6 +109,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
 
         let menu = NSMenu()
 
+        let serversItem = NSMenuItem(
+            title: "Servers…",
+            action: #selector(showServerSettings(_:)),
+            keyEquivalent: ""
+        )
+        serversItem.target = self
+        menu.addItem(serversItem)
+        menu.addItem(.separator())
+
         let launchItem = NSMenuItem(
             title: "Launch at Login",
             action: #selector(toggleLaunchAtLogin(_:)),
@@ -156,6 +170,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     @objc private func selectRefreshInterval(_ sender: NSMenuItem) {
         guard let value = sender.representedObject as? NSNumber else { return }
         store.refreshInterval = value.doubleValue
+    }
+
+    @objc private func showServerSettings(_ sender: Any?) {
+        store.reloadHosts()
+
+        let window: NSWindow
+        if let existing = settingsWindow {
+            window = existing
+        } else {
+            let controller = NSHostingController(rootView: HostSettingsView(store: store))
+            window = NSWindow(contentViewController: controller)
+            window.title = "GPU Pulse Settings"
+            window.styleMask = [.titled, .closable, .miniaturizable]
+            window.setContentSize(NSSize(width: 460, height: 430))
+            window.isReleasedWhenClosed = false
+            window.center()
+            settingsWindow = window
+        }
+
+        NSApp.activate(ignoringOtherApps: true)
+        window.makeKeyAndOrderFront(sender)
     }
 
     @objc private func toggleLaunchAtLogin(_ sender: NSMenuItem) {
